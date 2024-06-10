@@ -22,7 +22,7 @@ class Struct:
 def nameFig(option):
     # sets name for the file generated
     # File name:
-    fpath = 'C:\\Users\\ztoth\\Documents\\Python\\PoreFigs\\'
+    fpath = 'C:\\Users\\ztoth\\Documents\\GitHub\\cortical_bone_generator\\pore_files\\'
     #"'.\PoreFigs\'"
     if option.namestyle == 'Timestamp':
         clock_ = datetime.datetime.now()
