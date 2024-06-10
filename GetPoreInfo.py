@@ -24,9 +24,9 @@ class Struct:
 def GetPoreData(file_directory = None):
 
     if file_directory is None: 
-        file_directory = "./PoreFigs/Bones7-25/"
+        file_directory = "./pore_files/bones_7-25/"
     if file_directory == 'Real': 
-        file_directory = "C:/Users/ztoth/Documents/MATLAB/CorticalBoneGenerator/PoreFigs/RealBone" 
+        file_directory = "./pore_files/real_bone/" 
     
     fname = [f for f in os.listdir(file_directory) if f.endswith('.tif')]
     # "pytest.tif"
@@ -68,7 +68,7 @@ def GetPoreData(file_directory = None):
 #%% Save Pore Data
 
 def SavePoreData(filename):
-    with open(filename, 'wb') as f:
+    with open("./stats_datasets/"+filename, 'wb') as f:
         try:
             pickle.dump([counts,values], f)
         except NameError:
@@ -77,6 +77,7 @@ def SavePoreData(filename):
 #%% Read Pore Data
 
 def ReadPoreData(targetfile):
+    targetfile = "./stats_datasets/" + targetfile
     if (os.path.isfile(targetfile) & (os.path.getsize(targetfile) > 0)):
         with open(targetfile, 'rb') as f:
             *_, porevalues = pickle.load(f)
@@ -188,7 +189,7 @@ if __name__ == "__main__":
     targetfile = ['RealPoreInfo.pkl','GenPoreInfo.pkl','7-18PoreInfo.pkl','7-15.7PoreInfo.pkl','MatchingPoreInfo.pkl','7-25PoreInfo.pkl']
     varnames = ['values_Real','values_48_157','values_7_18','values_7_157','values_Matching','values_7_25']
 
-    for a,b in zip(targetfile, varnames):
+    for a,b in zip("./stats_datasets/"+targetfile, varnames):
         if (os.path.isfile(a) & (os.path.getsize(a) > 0)):
             exec("%s = ReadPoreData(%s)" % (b, a))
     del a,b,targetfile,varnames
