@@ -6,42 +6,42 @@
 The main program. Generates a 3-dimensional array intended to replicate cortical bone at the micron scale. Each voxel of the array generated represents a 10 micron cube. Uses functions defined in PoreGenerator_funcs.py
 ## PoreGenerator_funcs.py
 ### nameFig(option)
-Function that takes in option.namestyle and outputs the name to be used for the files.
+Function that outputs the name to save the program output files as. If `Timestamp`, saves the file in `YYYY_MM_DD_HH_MM_SS` format.
 ### getPD(mu, sigma, weighting, option)
-Function that takes in parameters and outputs probability distribution objects, which are later used to create variance within the program.
+Function that outputs probability distribution objects for for circularity, diameter, porosity, osteon length, and azimuthal angle, which are later used to create variance within the program.
 ### getRC(option, PD)
-Function that generates radius and circularity values for each pore generated. If DiscreteCircularities or DiscreteDiameters options are used, the values used are selected from that discrete list.
+Function that generates radius and circularity values for each pore generated. If `LinearDiscrete*` or `WeightedDiscrete*` options are used, the values used are chosen from the list or rounded to the nearest value on the list, respectively.
 ### networkPore(valueslog, minz, z, maxz, iteration)
-Function that takes in the list of pores previously generated in order to generate new pores branching off of previous ones. Used to better replicate the networked structure of the canal system in cortical bone.
+Function uses a list of pores previously generated in order to generate new pores branching off of them. Used to better replicate the networked structure of the canal system in cortical bone.
 ### getXY(option, XYprimer)
-Function that generates x and y coordinate values for each pore generated. Depending on option.LocationType, each pore is either generated with a random center, or according to a square or radial grid pattern.
+Function that generates x and y coordinate values for each pore generated. Depending on `option.LocationType`, each pore is either generated with a random center, or according to a square (`'Square'`) or radial grid pattern (`'Radial'`). 
 ### erodePores(Bone)
-Functions used in conjunction to roughen the image generated and to break up geometric artefacts such as straight lines.
+Functions used to roughen the image generated and to break up geometric artefacts such as straight lines by filling in pores at the edges.
 ### mergePores(Bone)
-Functions used in conjunction to roughen the image generated and to break up geometric artefacts such as straight lines.
+Functions used to roughen the image generated and to break up geometric artefacts such as straight lines by widening pores and merging nearby ones.
 ### getTextOutput(option, mu, sigma, weighting, TargetPorosity, pores_before_networking, sealed_osteon_chance, transverse_flag_onset, shape_proportions, RNGkey, fname)
-Function that takes in all important variables and formats them to be saved as text and excel files along with the image generated.
+Function that takes in all input variables and formats them to be saved as text and excel files along with the image generated.
 ### make3DModel(fpath, fname, Bone)
-Lorem ipsum dolor sit amet...
-## GetPoreData.py
-### GetPoreInfo(file_directory)
-...
-### SavePoreData(filename)
-...
-### ReadPoreData(targetfile)
-...
-### PoreHist(values, title)
-...
-### PlotDiameterGraphs(titles, varnames)
-...
-### UnbalancedTTest(values_test, values_real)
-...
-### PercentBinHeightChange(Best_values, Literature_values, Real_values)
-...
+Saves generated array as an .stl file.
+## GetPoreInfo.py
 ### importBone(fpath, fname)
-...
+Reads .TIFF file to retrieve the saved array.
+### GetPoreData(file_directory)
+Imports folder of .TIFF files, segments them into two-dimensional layers, and labels all pixels in each pore via a connected component labeling algorithm. The diameter of each pore is then found assuming a circular shape. Both the lists for individual samples and the aggregate data is saved.
+### SavePoreData(filename)
+Saves `counts` and `values` variables from `GetPoreData()` as a .pkl file.
+### ReadPoreData(targetfile)
+Opens .pkl file from `SavePoreData()` and retrieves the `values` data.
+### PoreHist(values, title)
+Creates histogram with standardized format from pore data.
+### PlotDiameterGraphs(titles, varnames)
+Batch creates histograms with `PoreHist()`.
+### UnbalancedTTest(values_test, values_real)
+Performs an unbalanced t-test on two sets of values.
+### PercentBinHeightChange(Best_values, Literature_values, Real_values)
+Compares the histogram bins for two samples, returning the average percent change in bin height between the two.
 ### RuntimeProfiler(filename)
-...
+Runs the program with data on how long different code segments take to run.
 
 ## SetupBoneImg.py
 Python script for use in Seg3D which adds a function, `showPorosity(filename)`, to be used in the python console. This function takes the name of a file to import and processes the image before displaying it in 3D.
