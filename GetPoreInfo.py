@@ -189,8 +189,11 @@ def RuntimeProfiler(filename = 'PoreGenerator_MK6.py'):
 if __name__ == "__main__":
     targetfile = ['RealPoreInfo.pkl','GenPoreInfo.pkl','7-18PoreInfo.pkl','7-15.7PoreInfo.pkl','MatchingPoreInfo.pkl','7-25PoreInfo.pkl']
     varnames = ['values_Real','values_48_157','values_7_18','values_7_157','values_Matching','values_7_25']
-
-    for a,b in zip("./stats_datasets/" + targetfile, varnames):
+    
+    targetfile = list(map(lambda x: "./stats_datasets/" + x, targetfile))
+    
+    for a,b in zip(targetfile, varnames):
         if (os.path.isfile(a) & (os.path.getsize(a) > 0)):
-            exec("%s = ReadPoreData(%s)" % (b, a))
+            a = a.removeprefix("./stats_datasets/")
+            exec("%s = ReadPoreData(a)" % (b))
     del a, b, targetfile, varnames
