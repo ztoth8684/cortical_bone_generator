@@ -89,8 +89,7 @@ def getRC(option,PD):
     if option.varLink == 1:
         # linked radius and circularity
         E = PD.SED.rvs()
-        S = E > 17
-        if S == 0:
+        if E <= 17:
             C = PD.Ncircularity.rvs()
             R = 0.5* PD.Ndiameter.rvs()
         else:
@@ -103,14 +102,12 @@ def getRC(option,PD):
     if option.LinearDiscreteDiameters != []:
         R = 0.5* random.choice(option.LinearDiscreteDiameters)
     elif option.WeightedDiscreteDiameters != []:
-        L = 2*R
-        R = min(option.WeightedDiscreteDiameters, key=lambda x: abs(np.subtract(x,L)))
+        R = min(option.WeightedDiscreteDiameters, key=lambda x: abs(np.subtract(x,2*R)))
     
     if option.LinearDiscreteCircularities != []:
         C = random.choice(option.LinearDiscreteCircularities)
     elif option.WeightedDiscreteCircularities != []:
-        K = C
-        C = min(option.WeightedDiscreteCircularities, key=lambda x: abs(np.subtract(x,K)))
+        C = min(option.WeightedDiscreteCircularities, key=lambda x: abs(np.subtract(x,C)))
     
     return R,C
 #%%
