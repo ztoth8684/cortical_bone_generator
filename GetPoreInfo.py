@@ -196,4 +196,11 @@ if __name__ == "__main__":
         if (os.path.isfile(a) & (os.path.getsize(a) > 0)):
             a = a.removeprefix("./stats_datasets/")
             exec("%s = ReadPoreData(a)" % (b))
-    del a, b, targetfile, varnames
+            
+    titles = ['CT Scan Pore Diameter','4.8-15.7 Pore Diameter','7-18 Pore Diameter','7-15.7 Pore Diameter','Matching Pore Diameter','7-25 Pore Diameter']
+
+    for c,b in zip(titles, varnames):
+        if b in locals():
+            exec("PoreHist(%s, c)" % (b))
+            
+    del a, b, c, targetfile, varnames, titles
