@@ -115,7 +115,7 @@ def PlotDiameterGraphs(titles=None, varnames=None):
 
     for c,b in zip(titles, varnames):
         if b in locals():
-            exec("PoreHist(%s, c)" % (b))
+            PoreHist(b, c)
 
 #%% Unbalanced T-Test
 
