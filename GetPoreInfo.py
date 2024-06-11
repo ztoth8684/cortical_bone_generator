@@ -19,6 +19,24 @@ from ccl_gh_pages.ccl import connected_component_labelling
 class Struct:
     pass
 
+#%% Get Array from TIFF file
+
+def importBone(fpath,fname):
+    # reads TIFF file
+    rawBone = io.imread(fpath+fname)
+    # if TIFF file is RGB, flattens to B/W
+    if rawBone.ndim == 4:
+        Bone_bool = np.squeeze(np.delete(rawBone,(1,2),3))
+    elif rawBone.ndim == 3:
+        Bone_bool = rawBone
+    # if image has [1] for matrix and [0] for pore, switches it
+    if np.mean(Bone_bool) > 0.5:
+        Bone = np.float32(~Bone_bool)
+    else:
+        Bone = np.float32(Bone_bool)
+    
+    return Bone
+
 # %%  Get Data for ,tif files in folder
 
 def GetPoreData(file_directory = None):
@@ -35,18 +53,7 @@ def GetPoreData(file_directory = None):
     values = []
     
     for f in fname:
-        # reads TIFF file
-        rawBone = io.imread(file_directory+f)
-        # if TIFF file is RGB, flattens to B/W
-        if rawBone.ndim == 4:
-            Bone_bool = np.squeeze(np.delete(rawBone,(1,2),3))
-        elif rawBone.ndim == 3:
-            Bone_bool = rawBone
-        # if image has [1] for matrix and [0] for pore, switches it
-        if np.mean(Bone_bool) > 0.5:
-            Bone = np.float32(~Bone_bool)
-        else:
-            Bone = np.float32(Bone_bool)
+        Bone = importBone(file_directory, f)
         # for each slice, label and get pixel counts for each 2Dpore
         for n in range(len(Bone)):    
             layer = Bone[n,:,:]
@@ -168,12 +175,6 @@ def PercentBinHeightChange(Best_values = None, Literature_values = None, Real_va
     
     print("Change Real Sample -> Values from Literature: "+str(round(Lit_dev,ndigits=2))+"±"+str(round(Lit_sigma,ndigits=2))+"%")
     print("Change Real Sample -> Optimized Values:       "+str(round(Best_dev,ndigits=2))+"±"+str(round(Best_sigma,ndigits=2))+"%")
-
-#%% Get Array from TIFF file
-
-def importBone(fpath,fname):
-    Bone = np.float32(np.squeeze(np.delete(io.imread(fpath+fname),(1,2),3)))
-    return Bone
 
 #%% Runtime Profiler
 
