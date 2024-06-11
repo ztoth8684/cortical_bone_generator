@@ -22,8 +22,8 @@ class Struct:
 def nameFig(option):
     # sets name for the file generated
     # File name:
-    fpath = 'C:\\Users\\ztoth\\Documents\\GitHub\\cortical_bone_generator\\pore_files\\'
-    #"'.\PoreFigs\'"
+    # fpath = 'C:\\Users\\ztoth\\Documents\\GitHub\\cortical_bone_generator\\pore_files\\'
+    fpath = './pore_files/'
     if option.namestyle == 'Timestamp':
         clock_ = datetime.datetime.now()
         fname = clock_.strftime("%Y_%m_%d_%H_%M_%S") + '.tif'
