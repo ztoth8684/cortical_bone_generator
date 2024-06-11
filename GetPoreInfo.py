@@ -21,12 +21,12 @@ class Struct:
 
 #%% Get Array from TIFF file
 
-def importBone(fpath,fname):
+def importBone(fpath, fname):
     # reads TIFF file
-    rawBone = io.imread(fpath+fname)
+    rawBone = io.imread(fpath + fname)
     # if TIFF file is RGB, flattens to B/W
     if rawBone.ndim == 4:
-        Bone_bool = np.squeeze(np.delete(rawBone,(1,2),3))
+        Bone_bool = np.squeeze(np.delete(rawBone, (1,2), 3))
     elif rawBone.ndim == 3:
         Bone_bool = rawBone
     # if image has [1] for matrix and [0] for pore, switches it
@@ -47,7 +47,7 @@ def GetPoreData(file_directory = None):
         file_directory = "./pore_files/real_bone/" 
     
     fname = [f for f in os.listdir(file_directory) if f.endswith('.tif')]
-    # "pytest.tif"
+    # fname = ['pytest.tif']
     
     counts = []
     values = []
@@ -69,15 +69,15 @@ def GetPoreData(file_directory = None):
                 
     values.sort(reverse=True)
     
-    Beep(500,500)  # when done
+    Beep(500, 500)  # when done
     return counts, values
 
 #%% Save Pore Data
 
 def SavePoreData(filename):
-    with open("./stats_datasets/"+filename, 'wb') as f:
+    with open("./stats_datasets/" + filename, 'wb') as f:
         try:
-            pickle.dump([counts,values], f)
+            pickle.dump([counts, values], f)
         except NameError:
             print("Variable 'counts' or 'values' is not defined")
     
@@ -103,7 +103,7 @@ def PoreHist(values, title):
 
 #%% Plot Diameter Graphs
 
-def PlotDiameterGraphs(titles = None, varnames = None):
+def PlotDiameterGraphs(titles=None, varnames=None):
     if titles is None: 
         titles = ['CT Scan Pore Diameter','4.8-15.7 Pore Diameter','7-18 Pore Diameter','7-15.7 Pore Diameter','Matching Pore Diameter','7-25 Pore Diameter']
     if varnames is None: 
@@ -131,11 +131,11 @@ def UnbalancedTTest(values_test, values_real):
     n_real = len(values_real)
     n_test = len(values_test)
     ssqn_real = np.square(sigma_real)/n_real
-    ssqn_test = np.square(sigma_test) /n_test
+    ssqn_test = np.square(sigma_test)/n_test
     
-    t = (mu_real - mu_test)/np.sqrt( ssqn_real + ssqn_test )
+    t = (mu_real - mu_test)/np.sqrt(ssqn_real + ssqn_test)
     
-    df = np.square(ssqn_real + ssqn_test)/( (np.square(ssqn_real)/(n_real-1)) + (np.square(ssqn_test)/(n_test-1)) )
+    df = np.square(ssqn_real + ssqn_test)/((np.square(ssqn_real)/(n_real - 1)) + (np.square(ssqn_test)/(n_test - 1)))
     
     return t, df, variance_real, variance_test
 
@@ -165,8 +165,8 @@ def PercentBinHeightChange(Best_values = None, Literature_values = None, Real_va
         Literature_incidence.append(len(list(x for x in Literature_values if range_*b/bins <= x < range_*(b+1)/bins))/len(Literature_values))
     
     
-    Delta_literature = 100*abs(np.subtract(Real_incidence,Literature_incidence))
-    Delta_best = 100*abs(np.subtract(Real_incidence,Best_incidence))
+    Delta_literature = 100*abs(np.subtract(Real_incidence, Literature_incidence))
+    Delta_best = 100*abs(np.subtract(Real_incidence, Best_incidence))
     
     Best_dev = np.mean(Delta_best)
     Best_sigma = np.std(Delta_best)
@@ -179,7 +179,7 @@ def PercentBinHeightChange(Best_values = None, Literature_values = None, Real_va
 #%% Runtime Profiler
 
 def RuntimeProfiler(filename = 'PoreGenerator_MK6.py'):
-    cProfile.run(filename,'file')
+    cProfile.run(filename, 'file')
     p = pstats.Stats('file')
     p.sort_stats('cumulative').print_stats(10)
 
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     targetfile = ['RealPoreInfo.pkl','GenPoreInfo.pkl','7-18PoreInfo.pkl','7-15.7PoreInfo.pkl','MatchingPoreInfo.pkl','7-25PoreInfo.pkl']
     varnames = ['values_Real','values_48_157','values_7_18','values_7_157','values_Matching','values_7_25']
 
-    for a,b in zip("./stats_datasets/"+targetfile, varnames):
+    for a,b in zip("./stats_datasets/" + targetfile, varnames):
         if (os.path.isfile(a) & (os.path.getsize(a) > 0)):
             exec("%s = ReadPoreData(%s)" % (b, a))
-    del a,b,targetfile,varnames
+    del a, b, targetfile, varnames
