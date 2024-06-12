@@ -35,9 +35,9 @@ class Struct:
 
 option = Struct()
 # set to True to keep the same rng used last generation. Any other value will be used as a seed
-option.debug = False
+option.debug = 'GivenPorosity'
 # 'Timestamp' or name to be used
-option.namestyle = 'Timestamp'
+option.namestyle = '10%_Porosity' # 'Timestamp'
 # True if variation in diameter and circularity should be linked
 # eg, large pored would tend to also be oblong
 option.varLink = True
@@ -76,7 +76,7 @@ option.variedPoreShape = True
 option.ArraySize = 200  # 200
 
 # 'Exp' to choose value from experimental distribution
-TargetPorosity = 'Exp'  # 'Exp'
+TargetPorosity = 0.1  # 'Exp'
 
 option.maxosteonlength = 220/3  # 220/3
 
