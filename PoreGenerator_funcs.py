@@ -66,9 +66,11 @@ def getPD(mu,sigma,weighting,option):
     PD.porosity = stats.truncnorm(a=((0.01-mu.porosity)/sigma.porosity) ,b=np.Inf,loc=mu.porosity, scale=sigma.porosity)
     PD.osteonlength = stats.truncnorm(a=(-mu.porosity/sigma.porosity) ,b=((option.maxosteonlength-mu.osteonlength)/sigma.osteonlength),loc=mu.osteonlength, scale=sigma.osteonlength)
     
-    PD.phi1 = stats.uniform(loc=weighting.phi_values[0],scale=weighting.phi_values[1]-weighting.phi_values[0])
-    PD.phi2 = stats.uniform(loc=weighting.phi_values[1],scale=weighting.phi_values[2]-weighting.phi_values[1])
-    PD.phi = MixtureModel([PD.phi1, PD.phi2],weights= weighting.phi_probs)
+    PD.phi = len(weighting.phi_probs)*[0]
+
+    for n in range(len(PD.phi)):
+        PD.phi[n] = stats.uniform(loc=weighting.phi_values[n], scale=weighting.phi_values[n+1]-weighting.phi_values[n])
+    PD.phi = MixtureModel(PD.phi,weights= weighting.phi_probs)
     
     return PD
 #%%
