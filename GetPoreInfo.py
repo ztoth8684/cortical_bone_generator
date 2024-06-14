@@ -74,7 +74,7 @@ def GetPoreData(file_directory = None):
 
 #%% Save Pore Data
 
-def SavePoreData(filename):
+def SavePoreData(counts, values, filename):
     with open("./stats_datasets/" + filename, 'wb') as f:
         try:
             pickle.dump([counts, values], f)
