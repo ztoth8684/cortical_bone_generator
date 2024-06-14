@@ -197,7 +197,7 @@ if __name__ == "__main__":
             a = a.removeprefix("./stats_datasets/")
             exec("%s = ReadPoreData(a)" % (b))
             
-    titles = ['CT Scan Pore Diameter','4.8-15.7 Pore Diameter','7-18 Pore Diameter','7-15.7 Pore Diameter','Matching Pore Diameter','7-25 Pore Diameter']
+    titles = ['Pore Diameter from CT Scans','Pore Diameter from Literature Values','Pore Diameter from Optimized Values','7-15.7 Pore Diameter','Matching Pore Diameter','7-25 Pore Diameter']
 
     for c,b in zip(titles, varnames):
         if b in locals():
