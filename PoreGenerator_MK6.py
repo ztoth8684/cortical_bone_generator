@@ -76,7 +76,7 @@ option.variedPoreShape = True
 option.ArraySize = 200  # 200
 
 # 'Exp' to choose value from experimental distribution
-TargetPorosity = 0.2  # 'Exp'
+TargetPorosity = 'Exp'  # 'Exp'
 
 option.maxosteonlength = 220/3  # 220/3
 
@@ -178,7 +178,7 @@ if option.mergePores is True:
     TargetPorosity = TargetPorosity/0.739
 
 # creates log for use in pore networking
-valueslog = np.zeros([12, int(round(70000*TargetPorosity, ndigits=-3))])
+valueslog = np.zeros([12, int(round(7000000*TargetPorosity/mu.osteonlength, ndigits=-3))])
     # [R; C; theta; phi; x; y; minz; z; maxz; isfilled; A; B]
 iteration = 0
 
