@@ -124,8 +124,8 @@ weighting.phi_values = [0, pi/12, pi/2]  # [0,pi/12,pi/2]
 weighting.phi_probs = [0.5, 0.5]  # [0.5, 0.5]
 
 # Parameters for theta value selection
-weighting.phi_values = 'rand'  # 'rand'
-weighting.phi_probs = []  # []
+weighting.theta_values = [0,2*pi]  # [0,2*pi]
+weighting.theta_probs = [1]  # [1]
 
 # Proportions of each pore shape: [Cylinder, Proximal Cone, Distal Cone,
 #                                                   Ellipsoid, Hyperboloid]
