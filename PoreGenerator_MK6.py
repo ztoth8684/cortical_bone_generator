@@ -123,6 +123,10 @@ sigma.porosity = 0.036744908  # 0.036744908
 weighting.phi_values = [0, pi/12, pi/2]  # [0,pi/12,pi/2]
 weighting.phi_probs = [0.5, 0.5]  # [0.5, 0.5]
 
+# Parameters for theta value selection
+weighting.phi_values = 'rand'  # 'rand'
+weighting.phi_probs = []  # []
+
 # Proportions of each pore shape: [Cylinder, Proximal Cone, Distal Cone,
 #                                                   Ellipsoid, Hyperboloid]
 shape_proportions = [0.392, 0.094, 0.351, 0.122, 0.041]  # [0.392, 0.094, 0.351, 0.122, 0.041] DOI: 10.1111/j.1439-0264.2009.00973.x
@@ -200,7 +204,7 @@ while ((1-np.mean(Bone) < TargetPorosity) and (XYprimer.ignoreTP == 0)) or (XYpr
     [R, C] = getRC(option, PD)
     z = random.random() * option.ArraySize
     # theta is angle of trajectory, phi is angle of depression
-    theta = 2*pi*random.random()
+    theta = PD.theta.rvs(1)
     phi = PD.phi.rvs(1)
 
     # Correction factor (phi is also correcting things in eqn)

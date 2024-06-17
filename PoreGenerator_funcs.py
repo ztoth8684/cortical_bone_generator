@@ -76,6 +76,17 @@ def getPD(mu,sigma,weighting,option):
         for n in range(len(PD.phi)):
             PD.phi[n] = stats.uniform(loc=weighting.phi_values[n], scale=weighting.phi_values[n+1]-weighting.phi_values[n])
         PD.phi = MixtureModel(PD.phi,weights= weighting.phi_probs)
+        
+    if weighting.theta_values == 'rand':
+        PD.theta = stats.uniform(loc=0, scale = 2*np.pi)
+    elif len(weighting.theta_values) == 1:
+        PD.theta = stats.uniform(loc=weighting.theta_values, scale = 0)
+    else:
+        PD.theta = len(weighting.theta_probs)*[0]
+        
+        for n in range(len(PD.theta)):
+            PD.theta[n] = stats.uniform(loc=weighting.theta_values[n], scale=weighting.theta_values[n+1]-weighting.theta_values[n])
+        PD.theta = MixtureModel(PD.theta,weights= weighting.theta_probs)
     
     return PD
 #%%
