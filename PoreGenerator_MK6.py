@@ -91,6 +91,7 @@ export.stl = False
 mu = Struct()
 sigma = Struct()
 weighting = Struct()
+params = Struct()
 
 # SED related parameters below from DOI: 10.1002/jbmr.3561
 # Parameters for SED per hole
@@ -129,13 +130,13 @@ weighting.theta_probs = [1]  # [1]
 
 # Proportions of each pore shape: [Cylinder, Proximal Cone, Distal Cone,
 #                                                   Ellipsoid, Hyperboloid]
-shape_proportions = [0.392, 0.094, 0.351, 0.122, 0.041]  # [0.392, 0.094, 0.351, 0.122, 0.041] DOI: 10.1111/j.1439-0264.2009.00973.x
+params.shape_proportions = [0.392, 0.094, 0.351, 0.122, 0.041]  # [0.392, 0.094, 0.351, 0.122, 0.041] DOI: 10.1111/j.1439-0264.2009.00973.x
 
-pores_before_networking = 75  # 75
-top_branches = [0,2] # [0,2]
-bottom_branches = [0,2] # [0,2]
-sealed_osteon_chance = 0.068  # 0.068 # DOI: 10.1002/ar.21309
-transverse_flag_onset = pi/4  # pi/4
+params.pores_before_networking = 75  # 75
+params.top_branches = [1,1] # [0,2]
+params.bottom_branches = [0,2] # [0,2]
+params.sealed_osteon_chance = 0.068  # 0.068 # DOI: 10.1002/ar.21309
+params.transverse_flag_onset = pi/4  # pi/4
 
 # %% Initialization
 
@@ -213,12 +214,12 @@ while ((1-np.mean(Bone) < TargetPorosity) and (XYprimer.ignoreTP == 0)) or (XYpr
     minz = z - cos(phi)*0.5*PD.osteonlength.rvs(1)[0]
     maxz = z + cos(phi)*0.5*PD.osteonlength.rvs(1)[0]
 
-    if sum(valueslog[10,:]) > pores_before_networking and random.random() > sealed_osteon_chance:
+    if sum(valueslog[10,:]) > params.pores_before_networking and random.random() > params.sealed_osteon_chance:
         [x,y,minz,z,maxz,valueslog,iteration] = networkPore(valueslog,minz,z,maxz,iteration)
     else:
         [x, y, XYprimer] = getXY(option, XYprimer)
 
-    if phi > transverse_flag_onset:
+    if phi > params.transverse_flag_onset:
         miny = y - sin(phi) * PD.osteonlength.rvs(1)[0] * 0.25
         maxy = y + sin(phi) * PD.osteonlength.rvs(1)[0] * 0.25
         minx = x - sin(phi) * PD.osteonlength.rvs(1)[0] * 0.25
@@ -231,13 +232,13 @@ while ((1-np.mean(Bone) < TargetPorosity) and (XYprimer.ignoreTP == 0)) or (XYpr
 
     if option.variedPoreShape == 1:
         shapechoice = random.random()
-        if shapechoice < shape_proportions[0]:
+        if shapechoice < params.shape_proportions[0]:
             shape = 1                                          # Cylinder
-        elif shapechoice < sum(shape_proportions[0:2]):
+        elif shapechoice < sum(params.shape_proportions[0:2]):
             shape = 3*(5+abs(minz-ik))/245                    # Proximal Cone
-        elif shapechoice < sum(shape_proportions[0:3]):
+        elif shapechoice < sum(params.shape_proportions[0:3]):
             shape = 3*(5+abs(maxz-ik))/245                    # Distal Cone
-        elif shapechoice < sum(shape_proportions[0:4]):
+        elif shapechoice < sum(params.shape_proportions[0:4]):
             shape = 3*(5+np.minimum(abs(maxz-ik), abs(minz-ik)))/130  # Ellipsoid
         elif shapechoice <= 1:
             shape = 3*(5+abs(z-ik))/130                       # Hyperboloid
@@ -253,8 +254,8 @@ while ((1-np.mean(Bone) < TargetPorosity) and (XYprimer.ignoreTP == 0)) or (XYpr
         > R**2 * shape * ((ii>minx) & (ii<maxx)) * ((ij>miny) & (ij<maxy)) * ((ik>minz) & (ik<maxz)) ) \
         ), Bone.shape, order = 'F'))
 
-    A = random.randint(bottom_branches[0], bottom_branches[1])
-    B = random.randint(top_branches[0], top_branches[1])
+    A = random.randint(params.bottom_branches[0], params.bottom_branches[1])
+    B = random.randint(params.top_branches[0], params.top_branches[1])
 
     if A+B != 0:
         valueslog[:,iteration] = [np.squeeze(i) for i in [R,C,theta,phi,x,y,minz,z,maxz,1,A,B]]
@@ -277,8 +278,7 @@ Bone = ~(Bone.astype(bool))
 
 # %% Save Results
 
-fullcell, sheetprep, sheetcell = getTextOutput(option, mu, sigma, weighting, TargetPorosity, pores_before_networking, \
-                   sealed_osteon_chance, transverse_flag_onset, shape_proportions, RNGkey, fname)
+fullcell, sheetprep, sheetcell = getTextOutput(option, mu, sigma, weighting, params, TargetPorosity, RNGkey, fname)
 if export.xcls is True:
     spreadsheet_name = 'Metadata.xlsx'
     if os.path.isfile(fpath+spreadsheet_name) is False:

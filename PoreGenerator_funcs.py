@@ -278,8 +278,7 @@ def mergePores(Bone):
     return Bone              
 #%%
 
-def getTextOutput(option, mu, sigma, weighting, TargetPorosity, pores_before_networking, \
-                  sealed_osteon_chance, transverse_flag_onset, shape_proportions, RNGkey, fname):
+def getTextOutput(option, mu, sigma, weighting, params, TargetPorosity, RNGkey, fname):
     
     varlist = [
     'option.varLink' ,
@@ -312,10 +311,12 @@ def getTextOutput(option, mu, sigma, weighting, TargetPorosity, pores_before_net
     'weighting.phi_values' ,
     'weighting.phi_probs' ,
     'TargetPorosity' ,
-    'pores_before_networking' ,
-    'sealed_osteon_chance' ,
-    'transverse_flag_onset' ,
-    'shape_proportions' ,
+    'params.pores_before_networking' ,
+    'params.top_branches' ,
+    'params.bottom_branches' ,
+    'params.sealed_osteon_chance' ,
+    'params.transverse_flag_onset' ,
+    'params.shape_proportions' ,
     'RNGkey' ,
     ]
     
