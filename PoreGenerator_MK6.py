@@ -7,6 +7,7 @@ Created on Tue Jul 11 10:35:10 2023
 # set PYTHONPATH = %PYTHONPATH%; C:\Users\ztoth\Documents\Python\
 
 import os.path
+import sys
 from winsound import Beep
 import random
 import pickle
@@ -42,21 +43,21 @@ option, TargetPorosity, export, mu, sigma, weighting, params = LoadParameters()
 
 # sets rng based on option.debug
 if option.debug == 1:
-    if os.path.isfile(fpath+'saved_rng.pkl'):
+    if os.path.isfile('./saved_rng.pkl'):
         with open('saved_rng.pkl') as f:
             RNGkey = pickle.load(f)
-        random.setstate(RNGkey)
+        random.seed(RNGkey)
 elif option.debug == 0:
-    random.seed()
-    RNGkey = random.getstate()
+    RNGkey = random.randrange(sys.maxsize)
+    random.seed(RNGkey)
     with open('saved_rng.pkl', 'wb') as f:
         pickle.dump(RNGkey, f)
 else:
     rngseed = []
     for character in option.debug:
         rngseed.append(ord(character))
-    random.seed(sum(rngseed))
-    RNGkey = random.getstate()
+    RNGkey = sum(rngseed)
+    random.seed(RNGkey)
     with open('saved_rng.pkl', 'wb') as f:
         pickle.dump(RNGkey, f)
 
