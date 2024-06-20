@@ -70,7 +70,7 @@ if option.smoothPores is True:
     target_porosity = target_porosity/0.739
 
 # creates log for use in pore networking
-valueslog = np.zeros([12, int(round(7000000*target_porosity/mu.osteonlength, ndigits=-3))])
+valueslog = np.zeros([12, int(round(7_000_000*target_porosity/mu.osteonlength, ndigits=-3))])
     # [R; C; theta; phi; x; y; minz; z; maxz; isfilled; A; B]
 iteration = 0
 

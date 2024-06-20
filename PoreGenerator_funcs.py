@@ -278,7 +278,7 @@ def poreClast(Bone):
     return Bone              
 #%%
 
-def getTextOutput(option, mu, sigma, weighting, params, TargetPorosity, RNGkey, fname):
+def getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey, fname):
     
     varlist = [
     'option.varLink' ,
@@ -291,7 +291,7 @@ def getTextOutput(option, mu, sigma, weighting, params, TargetPorosity, RNGkey, 
     'option.WeightedDiscreteDiameters' ,
     'option.LinearDiscreteCircularities' ,
     'option.WeightedDiscreteCircularities' ,
-    'option.mergePores' ,
+    'option.smoothPores' ,
     'option.variedPoreShape' ,
     'option.ArraySize' ,
     'option.maxosteonlength' ,
@@ -310,7 +310,7 @@ def getTextOutput(option, mu, sigma, weighting, params, TargetPorosity, RNGkey, 
     'weighting.SED' ,
     'weighting.phi_values' ,
     'weighting.phi_probs' ,
-    'TargetPorosity' ,
+    'target_porosity' ,
     'params.pores_before_networking' ,
     'params.top_branches' ,
     'params.bottom_branches' ,
