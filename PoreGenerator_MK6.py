@@ -13,20 +13,13 @@ import random
 import pickle
 import numpy as np
 import pandas as pd
-
 import tifffile as tf
 
 from numpy import cos, sin, tan, pi
 
-from PoreGenerator_funcs import nameFig
-from PoreGenerator_funcs import getPD
-from PoreGenerator_funcs import getRC
-from PoreGenerator_funcs import networkPore
-from PoreGenerator_funcs import getXY
-from PoreGenerator_funcs import erodePores
-from PoreGenerator_funcs import mergePores
-from PoreGenerator_funcs import getTextOutput
-from PoreGenerator_funcs import make3DModel
+from PoreGenerator_funcs import nameFig, getPD, getRC, networkPore, getXY, \
+    erodePores, mergePores, getTextOutput, make3DModel
+
 from LoadParameters import LoadParameters
 
 class Struct:
