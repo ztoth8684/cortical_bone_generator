@@ -193,42 +193,42 @@ def getXY(option,XYprimer):
     #   location
     #
     #   XYprimer struct contains:
-    #       iu, it, SpaceList, AngleList, flag, break
+    #       iu, it, SpaceList, AngleList, ignore_target_porosity, grid_complete
     #   option struct contains:
     #       LocationType, location_err, ArraySize, Spacing, ignoreborder
-    if (option.LocationType in [1,'Circle','Radial']):
+    if (option.LocationType in [1, 'Circle', 'Radial']):
         XYprimer.iu += 1
         if XYprimer.iu == len(XYprimer.AngleList):
             if XYprimer.it == len(XYprimer.SpaceList):
                 XYprimer.it = 0
-                XYprimer.griddone = 1
+                XYprimer.grid_complete = 1
                 if option.location_err < 6:
-                    XYprimer.ignoreTP = 1
+                    XYprimer.ignore_target_porosity = 1
             XYprimer.it += 1
             XYprimer.iu = 1
-            XYprimer.AngleList = np.linspace(0,2*np.pi,XYprimer.it*int(np.sqrt(option.ArraySize/option.Spacing)))
+            XYprimer.AngleList = np.linspace(0, 2*np.pi, XYprimer.it*int(np.sqrt(option.ArraySize/option.Spacing)))
         
         # circular grid for pore location
-        x = (0.5*option.ArraySize + XYprimer.SpaceList[XYprimer.it -1]*np.cos(XYprimer.AngleList[XYprimer.iu -1])) + option.location_err*(2*random.random() -1)
-        y = (0.5*option.ArraySize + XYprimer.SpaceList[XYprimer.it -1]*np.sin(XYprimer.AngleList[XYprimer.iu -1])) + option.location_err*(2*random.random() -1);
+        x = (0.5*option.ArraySize + XYprimer.SpaceList[XYprimer.it - 1]*np.cos(XYprimer.AngleList[XYprimer.iu - 1])) + option.location_err*(2*random.random() - 1)
+        y = (0.5*option.ArraySize + XYprimer.SpaceList[XYprimer.it - 1]*np.sin(XYprimer.AngleList[XYprimer.iu - 1])) + option.location_err*(2*random.random() - 1);
 
     elif (option.LocationType in [2,'Square']):
         XYprimer.iu += 1
         if XYprimer.iu == len(XYprimer.SpaceList) + 1 - option.ignoreborder:
             if XYprimer.it == len(XYprimer.SpaceList) - option.ignoreborder:
                 XYprimer.it = option.ignoreborder
-                XYprimer.griddone = 1
+                XYprimer.grid_complete = 1
                 if option.location_err < 6:
-                    XYprimer.ignoreTP = 1
+                    XYprimer.ignore_target_porosity = 1
             XYprimer.it += 1
             XYprimer.iu = 1 + option.ignoreborder
             
         # square grid for pore location
-        x = XYprimer.SpaceList[XYprimer.it -1] + option.location_err*(2*random.random() -1)
-        y = XYprimer.SpaceList[XYprimer.iu -1] + option.location_err*(2*random.random() -1)
+        x = XYprimer.SpaceList[XYprimer.it - 1] + option.location_err*(2*random.random() - 1)
+        y = XYprimer.SpaceList[XYprimer.iu - 1] + option.location_err*(2*random.random() - 1)
         
     else:
-        XYprimer.griddone = 1;
+        XYprimer.grid_complete = 1;
         # random pore location
         x = option.ArraySize*random.random()
         y = option.ArraySize*random.random()

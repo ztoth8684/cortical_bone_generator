@@ -77,21 +77,21 @@ iteration = 0
 # Pre-sets some variables for choosing pore location
 # these are set for pore(n+1) when pore(n) is generated
 XYprimer = Struct()
-if option.LocationType == 1:
+if (option.LocationType in [1, 'Circle', 'Radial']):
     XYprimer.it = 1
     XYprimer.iu = 1
-    XYprimer.AngleList = np.linspace(0,2*pi,XYprimer.it*int(np.sqrt(option.ArraySize/option.Spacing)))
+    XYprimer.AngleList = np.linspace(0, 2*pi, XYprimer.it*int(np.sqrt(option.ArraySize/option.Spacing)))
 else:
     XYprimer.it = 1+option.ignoreborder
     XYprimer.iu = 1+option.ignoreborder
 
-XYprimer.SpaceList = np.linspace(0,option.ArraySize,int(option.ArraySize/option.Spacing))
-XYprimer.ignoreTP = 0
-XYprimer.griddone = 0
+XYprimer.SpaceList = np.linspace(0, option.ArraySize, int(option.ArraySize/option.Spacing))
+XYprimer.ignore_target_porosity = 0
+XYprimer.grid_complete = 0
 
 # %% Main Body
 
-while ((1-np.mean(Bone) < target_porosity) and (XYprimer.ignoreTP == 0)) or (XYprimer.griddone == 0):
+while ((1-np.mean(Bone) < target_porosity) and (XYprimer.ignore_target_porosity == 0)) or (XYprimer.grid_complete == 0):
 
     [R, C] = getRC(option, PD)
     z = random.random() * option.ArraySize
@@ -154,7 +154,7 @@ while ((1-np.mean(Bone) < target_porosity) and (XYprimer.ignoreTP == 0)) or (XYp
 
     # For Debugging Purposes Only
     # Uncomment following line to only generate one pore
-    # XYprimer.griddone = 1; XYprimer.ignoreTP = 1;
+    # XYprimer.grid_complete = 1; XYprimer.ignore_target_porosity = 1;
 
 if option.smoothPores == 1:
     for n in range(10):
