@@ -238,8 +238,8 @@ def getXY(option,XYprimer):
     return x,y,XYprimer
 #%%              
               
-def erodePores(Bone):
-    #makes area adjacent to high amount of pores more porous
+def poreBlast(Bone):
+    # 'deposits' bone matrix -> decrease porosity (more 1's)
         
     adjacency = [(i,j,k) for i in (-1,0,1) for j in (-1,0,1) for k in (-1,0,1) if not (i == j == k == 0)] #the adjacency matrix
 
@@ -258,8 +258,8 @@ def erodePores(Bone):
     return Bone
 #%%
 
-def mergePores(Bone):
-    #makes area adjacent to high amount of pores more porous
+def poreClast(Bone):
+    # 'removes' bone matrix -> increase porosity (more 0's)
     
     adjacency = [(i,j,k) for i in (-1,0,1) for j in (-1,0,1) for k in (-1,0,1) if not (i == j == k == 0)] #the adjacency matrix
 

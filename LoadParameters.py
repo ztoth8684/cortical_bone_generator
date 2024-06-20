@@ -28,7 +28,7 @@ def LoadParameters(param_file = None):
         # If LocationType is not random, distance between grid lines
         option.Spacing = 16  # 16
         # If LocationType is not random, variation of pores from grid lines
-        # values 0-5 ignore TargetPorosity
+        # values 0-5 ignore target_porosity
         option.location_err = 6  # 6
         # If LocationType is square grid, whether to generate pores along the edge.
         option.ignoreborder = False
@@ -47,7 +47,7 @@ def LoadParameters(param_file = None):
         option.WeightedDiscreteCircularities = []
         
         # True if nearby pores should be smoothed and merged
-        option.mergePores = True
+        option.smoothPores = True
         # True if pores should have varying shape (cylinder,cone,ellipsoid,hyperboloid)
         option.variedPoreShape = True
         
@@ -55,7 +55,7 @@ def LoadParameters(param_file = None):
         option.ArraySize = 200  # 200
         
         # 'Exp' to choose value from experimental distribution
-        TargetPorosity = 'Exp'  # 'Exp'
+        target_porosity = 'Exp'  # 'Exp'
         
         option.maxosteonlength = 220/3  # 220/3
         
@@ -119,4 +119,4 @@ def LoadParameters(param_file = None):
     else:
         pass
     
-    return option, TargetPorosity, export, mu, sigma, weighting, params
+    return option, target_porosity, export, mu, sigma, weighting, params

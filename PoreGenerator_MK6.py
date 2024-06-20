@@ -18,7 +18,7 @@ import tifffile as tf
 from numpy import cos, sin, tan, pi
 
 from PoreGenerator_funcs import nameFig, getPD, getRC, networkPore, getXY, \
-    erodePores, mergePores, getTextOutput, make3DModel
+    poreBlast, poreClast, getTextOutput, make3DModel
 
 from LoadParameters import LoadParameters
 
@@ -28,7 +28,7 @@ class Struct:
 
 # %% Initialization
 
-option, TargetPorosity, export, mu, sigma, weighting, params = LoadParameters()
+option, target_porosity, export, mu, sigma, weighting, params = LoadParameters()
 
 
 # set file name
@@ -61,16 +61,16 @@ Bone = np.ones((option.ArraySize, option.ArraySize, option.ArraySize), dtype=np.
 
 PD = getPD(mu, sigma, weighting, option)
 
-# Chooses TargetPorosity Value from experimental distribution
-if TargetPorosity == 'Exp':
-    TargetPorosity = PD.porosity.rvs(1)[0]
+# Chooses target_porosity Value from experimental distribution
+if target_porosity == 'Exp':
+    target_porosity = PD.porosity.rvs(1)[0]
 
-# readjusts TargetPorosity to account for loss when mergePores is used
-if option.mergePores is True:
-    TargetPorosity = TargetPorosity/0.739
+# readjusts target_porosity to account for loss when mergePores is used
+if option.smoothPores is True:
+    target_porosity = target_porosity/0.739
 
 # creates log for use in pore networking
-valueslog = np.zeros([12, int(round(7000000*TargetPorosity/mu.osteonlength, ndigits=-3))])
+valueslog = np.zeros([12, int(round(7000000*target_porosity/mu.osteonlength, ndigits=-3))])
     # [R; C; theta; phi; x; y; minz; z; maxz; isfilled; A; B]
 iteration = 0
 
@@ -91,7 +91,7 @@ XYprimer.griddone = 0
 
 # %% Main Body
 
-while ((1-np.mean(Bone) < TargetPorosity) and (XYprimer.ignoreTP == 0)) or (XYprimer.griddone == 0):
+while ((1-np.mean(Bone) < target_porosity) and (XYprimer.ignoreTP == 0)) or (XYprimer.griddone == 0):
 
     [R, C] = getRC(option, PD)
     z = random.random() * option.ArraySize
@@ -156,20 +156,20 @@ while ((1-np.mean(Bone) < TargetPorosity) and (XYprimer.ignoreTP == 0)) or (XYpr
     # Uncomment following line to only generate one pore
     # XYprimer.griddone = 1; XYprimer.ignoreTP = 1;
 
-if option.mergePores == 1:
+if option.smoothPores == 1:
     for n in range(10):
         if random.randint(0, 1) == 0:
-            Bone = erodePores(Bone)
+            Bone = poreBlast(Bone)
         else:
-            Bone = mergePores(Bone)
-    # reverts TargetPorosity for bookkeeping
-    TargetPorosity = TargetPorosity*0.739
+            Bone = poreClast(Bone)
+    # reverts target_porosity for bookkeeping
+    target_porosity = target_porosity*0.739
 
 Bone = ~(Bone.astype(bool))
 
 # %% Save Results
 
-fullcell, sheetprep, sheetcell = getTextOutput(option, mu, sigma, weighting, params, TargetPorosity, RNGkey, fname)
+fullcell, sheetprep, sheetcell = getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey, fname)
 if export.xcls is True:
     spreadsheet_name = 'Metadata.xlsx'
     if os.path.isfile(fpath+spreadsheet_name) is False:
