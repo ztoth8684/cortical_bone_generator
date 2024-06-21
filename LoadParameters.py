@@ -12,11 +12,17 @@ class Struct:
 def LoadParameters(param_file = None):
     if param_file is None:
         
+        '''
+        Options
+        '''
+        
         option = Struct()
         mu = Struct()
         sigma = Struct()
         weighting = Struct()
         params = Struct()
+        export = Struct()
+
         
         # Set to False to use random seed.
         # Set to True to keep the same seed used last generation. 
@@ -24,12 +30,13 @@ def LoadParameters(param_file = None):
         option.debug = False
         # 'Timestamp' or name to be used
         option.namestyle = 'Timestamp' # 'Timestamp'
+
         # True if variation in diameter and circularity should be linked
         # eg, large pored would tend to also be oblong
         option.varLink = True
         # Minimum pore diameter permissible
         option.mindiameter = 0
-        
+
         # 'Circle' (or 1) for circular grid, 'Square' (or 2) for square grid, else random
         option.LocationType = 0
         # If LocationType is not random, distance between grid lines
@@ -55,25 +62,24 @@ def LoadParameters(param_file = None):
         
         # True if nearby pores should be smoothed and merged
         option.smoothPores = True
+        
         # True if pores should have varying shape (cylinder,cone,ellipsoid,hyperboloid)
         option.variedPoreShape = True
         
         # 10 micrometers/voxel
         option.ArraySize = 200  # 200
-        
         # 'Exp' to choose value from experimental distribution
         target_porosity = 'Exp'  # 'Exp'
-        
-        option.maxosteonlength = 220/3  # 220/3
-        
-        export = Struct()
+
+        # Files to Export: Excel, Text, TIFF Stack, STL
         export.xcls = True
         export.txt = False
         export.tiff = True
         export.stl = False
         
-        
-
+        '''
+        Parameters
+        '''
         
         # SED related parameters below from DOI: 10.1002/jbmr.3561
         # Parameters for SED per hole
@@ -95,8 +101,9 @@ def LoadParameters(param_file = None):
         sigma.Hcircularity = 0.045  # 0.045
         
         # Parameters for Canal Length
-        mu.osteonlength = 20  # 100
-        sigma.osteonlength = 5  # 37.5
+        mu.osteonlength = 100  # 100
+        sigma.osteonlength = 37.5  # 37.5
+        option.maxosteonlength = 220/3  # 220/3
         
         # Parameters for Porosity
         mu.porosity = 0.075046512  # 0.075046512
