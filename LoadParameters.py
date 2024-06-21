@@ -117,6 +117,6 @@ def LoadParameters(param_file = None):
         params.transverse_flag_onset = pi/4  # pi/4
 
     else:
-        pass
+        raise Exception
     
     return option, target_porosity, export, mu, sigma, weighting, params
