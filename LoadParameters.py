@@ -10,19 +10,19 @@ class Struct:
     pass
 
 def LoadParameters(param_file = None):
+    
+    option = Struct()
+    mu = Struct()
+    sigma = Struct()
+    weighting = Struct()
+    params = Struct()
+    export = Struct()
+    
     if param_file is None:
         
         '''
         Options
         '''
-        
-        option = Struct()
-        mu = Struct()
-        sigma = Struct()
-        weighting = Struct()
-        params = Struct()
-        export = Struct()
-
         
         # Set to False to use random seed.
         # Set to True to keep the same seed used last generation. 
