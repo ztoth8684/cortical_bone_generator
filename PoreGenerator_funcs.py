@@ -52,10 +52,10 @@ def getPD(mu,sigma,weighting,option):
     # Probability distributions for linked diameters and circularities
     
     PD.Ncircularity = stats.norm(loc=mu.Ncircularity, scale=sigma.Ncircularity)
-    PD.Ndiameter = stats.truncnorm(a=((option.mindiameter-mu.Ndiameter)/sigma.Ndiameter) ,b=np.Inf,loc=mu.Ndiameter, scale=sigma.Ndiameter)
+    PD.Ndiameter = stats.truncnorm(a=option.mindiameter, b=np.Inf,loc=mu.Ndiameter, scale=sigma.Ndiameter)
     
     PD.Hcircularity = stats.norm(loc=mu.Hcircularity, scale=sigma.Hcircularity)
-    PD.Hdiameter = stats.truncnorm(a=((option.mindiameter-mu.Hdiameter)/sigma.Hdiameter) ,b=np.Inf,loc=mu.Hdiameter, scale=sigma.Hdiameter)
+    PD.Hdiameter = stats.truncnorm(a=option.mindiameter, b=np.Inf,loc=mu.Hdiameter, scale=sigma.Hdiameter)
     
     PD.SED = stats.norm(loc=mu.SED, scale=sigma.SED)
     

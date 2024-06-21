@@ -13,14 +13,21 @@ def LoadParameters(param_file = None):
     if param_file is None:
         
         option = Struct()
-        # set to True to keep the same rng used last generation. Any other value will be used as a seed
-        option.debug = 'GivenPorosity'
+        mu = Struct()
+        sigma = Struct()
+        weighting = Struct()
+        params = Struct()
+        
+        # Set to False to use random seed.
+        # Set to True to keep the same seed used last generation. 
+        # Any other value will be used as a seed.
+        option.debug = False
         # 'Timestamp' or name to be used
-        option.namestyle = 'Curved Pore Trial' # 'Timestamp'
+        option.namestyle = 'Timestamp' # 'Timestamp'
         # True if variation in diameter and circularity should be linked
         # eg, large pored would tend to also be oblong
         option.varLink = True
-        # mindiameter only in effect for linked diameter and circularity
+        # Minimum pore diameter permissible
         option.mindiameter = 0
         
         # 'Circle' (or 1) for circular grid, 'Square' (or 2) for square grid, else random
@@ -66,10 +73,7 @@ def LoadParameters(param_file = None):
         export.stl = False
         
         
-        mu = Struct()
-        sigma = Struct()
-        weighting = Struct()
-        params = Struct()
+
         
         # SED related parameters below from DOI: 10.1002/jbmr.3561
         # Parameters for SED per hole
