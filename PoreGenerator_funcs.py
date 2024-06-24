@@ -10,15 +10,9 @@ import sys
 import datetime
 import pickle
 import numpy as np
-import scipy.stats as stats
 import random
 import meshlib.mrmeshpy as mr
 import meshlib.mrmeshnumpy as mrn
-
-from PoreGenerator_classes import MixtureModel
-class Struct:
-    pass
-
 
 #%%
 
@@ -62,59 +56,7 @@ def setRNG(option):
             pickle.dump(RNGkey, f)
             
     return RNGkey 
-#%%
 
-def getPD(mu,sigma,weighting,option):
-    PD = Struct()
-    #getPD(mu,sigma,weighting,mindiameter) Outputs Probablility Distributions
-    #
-    #   Uses PD and option structs to choose method of generating radius and
-    #   circularity
-    #
-    #   mu, sigma, and PD structs contain:
-    #       Ncircularity, Ndiameter, Hcircularity, Hdiameter, SED, TOTdiameter, 
-    #       TOTcircularity
-    
-    # Probability distributions for linked diameters and circularities
-    
-    PD.Ncircularity = stats.norm(loc=mu.Ncircularity, scale=sigma.Ncircularity)
-    PD.Ndiameter = stats.truncnorm(a=option.mindiameter, b=np.Inf,loc=mu.Ndiameter, scale=sigma.Ndiameter)
-    
-    PD.Hcircularity = stats.norm(loc=mu.Hcircularity, scale=sigma.Hcircularity)
-    PD.Hdiameter = stats.truncnorm(a=option.mindiameter, b=np.Inf,loc=mu.Hdiameter, scale=sigma.Hdiameter)
-    
-    PD.SED = stats.norm(loc=mu.SED, scale=sigma.SED)
-    
-    # Probability distributions for unlinked diameters and circularities    
-    PD.TOTdiameter = MixtureModel([PD.Ndiameter, PD.Hdiameter],weighting.SED)
-    PD.TOTcircularity = MixtureModel([PD.Ncircularity, PD.Hcircularity],weights= weighting.SED)
-    
-    PD.porosity = stats.truncnorm(a=((0.01-mu.porosity)/sigma.porosity) ,b=np.Inf,loc=mu.porosity, scale=sigma.porosity)
-    PD.osteonlength = stats.truncnorm(a=(-mu.porosity/sigma.porosity) ,b=((option.maxosteonlength-mu.osteonlength)/sigma.osteonlength),loc=mu.osteonlength, scale=sigma.osteonlength)
-    
-    if weighting.phi_values == 'rand':
-        PD.phi = stats.uniform(loc=0, scale = 0.5*np.pi)
-    elif len(weighting.phi_values) == 1:
-        PD.phi = stats.uniform(loc=weighting.phi_values, scale = 0)
-    else:
-        PD.phi = len(weighting.phi_probs)*[0]
-    
-        for n in range(len(PD.phi)):
-            PD.phi[n] = stats.uniform(loc=weighting.phi_values[n], scale=weighting.phi_values[n+1]-weighting.phi_values[n])
-        PD.phi = MixtureModel(PD.phi,weights= weighting.phi_probs)
-        
-    if weighting.theta_values == 'rand':
-        PD.theta = stats.uniform(loc=0, scale = 2*np.pi)
-    elif len(weighting.theta_values) == 1:
-        PD.theta = stats.uniform(loc=weighting.theta_values, scale = 0)
-    else:
-        PD.theta = len(weighting.theta_probs)*[0]
-        
-        for n in range(len(PD.theta)):
-            PD.theta[n] = stats.uniform(loc=weighting.theta_values[n], scale=weighting.theta_values[n+1]-weighting.theta_values[n])
-        PD.theta = MixtureModel(PD.theta,weights= weighting.theta_probs)
-    
-    return PD
 #%%
 
 def getRC(option,PD):

@@ -29,7 +29,6 @@ class Struct:
 
 option, target_porosity, export, mu, sigma, weighting, params = LoadParameters()
 
-
 # set file name
 [fpath, fname] = nameFig(option)
 
@@ -41,7 +40,7 @@ Bone = np.ones((option.ArraySize, option.ArraySize, option.ArraySize), dtype=np.
 # Sets up indexing of Bone array for use in calculations
 [ii,ij,ik] = np.unravel_index(np.arange(option.ArraySize**3), [option.ArraySize, option.ArraySize, option.ArraySize], 'F')
 
-PD = getPD(mu, sigma, weighting, option)
+PD = PGc.probability_dist(mu, sigma, weighting, option)
 
 # Chooses target_porosity Value from experimental distribution
 if target_porosity == 'Exp':
