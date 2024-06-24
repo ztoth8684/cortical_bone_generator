@@ -99,8 +99,8 @@ class probability_dist:
         self.TOTcircularity = MixtureModel([self.Ncircularity, self.Hcircularity], weighting.SED)
         
         # Probability distributions for number/ length of pores
-        self.porosity = stats.truncnorm(a=((0.01-mu.porosity)/sigma.porosity), b=np.Inf, loc=mu.porosity, scale=sigma.porosity)
-        self.osteonlength = stats.truncnorm(a=(-mu.porosity/sigma.porosity), b=((option.maxosteonlength-mu.osteonlength)/sigma.osteonlength), loc=mu.osteonlength, scale=sigma.osteonlength)
+        self.porosity = stats.truncnorm(a=0.01, b=np.Inf, loc=mu.porosity, scale=sigma.porosity)
+        self.osteonlength = stats.truncnorm(a=1, b=option.maxosteonlength, loc=mu.osteonlength, scale=sigma.osteonlength)
         
         # Probability distributions for azimuthal angle
         if weighting.phi_values == 'rand':
