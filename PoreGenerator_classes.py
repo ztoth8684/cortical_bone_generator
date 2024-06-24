@@ -90,7 +90,7 @@ class probability_dist:
         self.Ndiameter = stats.truncnorm(a=((option.mindiameter-mu.Ndiameter)/sigma.Ndiameter) ,b=np.Inf,loc=mu.Ndiameter, scale=sigma.Ndiameter)
         # High SED (larger, irregular pores)
         self.Hcircularity = stats.norm(loc=mu.Hcircularity, scale=sigma.Hcircularity)
-        self.Hdiameter = stats.truncnorm(a=option.mindiameter, b=np.Inf,loc=mu.Hdiameter, scale=sigma.Hdiameter)
+        self.Hdiameter = stats.truncnorm(a=((option.mindiameter-mu.Hdiameter)/sigma.Hdiameter), b=np.Inf,loc=mu.Hdiameter, scale=sigma.Hdiameter)
         # SED distribution
         self.SED = stats.norm(loc=mu.SED, scale=sigma.SED)
         
@@ -99,7 +99,9 @@ class probability_dist:
         self.TOTcircularity = MixtureModel([self.Ncircularity, self.Hcircularity], weighting.SED)
         
         # Probability distributions for number/ length of pores
+        # Minimum porosity clipped at 0.01
         self.porosity = stats.truncnorm(a=((0.01-mu.porosity)/sigma.porosity), b=np.Inf, loc=mu.porosity, scale=sigma.porosity)
+        # Maximum clipped at maxosteonlength
         self.osteonlength = stats.truncnorm(a=(-mu.osteonlength/sigma.osteonlength), b=((option.maxosteonlength-mu.osteonlength)/sigma.osteonlength), loc=mu.osteonlength, scale=sigma.osteonlength)
         
         # Probability distributions for azimuthal angle
