@@ -12,7 +12,7 @@ import random
 import meshlib.mrmeshpy as mr
 import meshlib.mrmeshnumpy as mrn
 
-from MixtureModel import MixtureModel
+from PoreGenerator_classes import MixtureModel
 class Struct:
     pass
 

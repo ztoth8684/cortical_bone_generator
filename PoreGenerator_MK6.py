@@ -19,6 +19,7 @@ from numpy import cos, sin, tan, pi
 
 from PoreGenerator_funcs import nameFig, getPD, getRC, networkPore, getXY, \
     poreBlast, poreClast, getTextOutput, make3DModel
+import PoreGenerator_classes as PGc
 
 from LoadParameters import LoadParameters
 
@@ -75,30 +76,8 @@ valueslog = np.zeros([12, int(round(7_000_000*target_porosity/mu.osteonlength, n
 iteration = 0
 
 # Pre-sets some variables for choosing pore location
-# these are set for pore(n+1) when pore(n) is generated
-XYprimer = Struct()
+XYprimer = PGc.XYprimer(option)
 
-XYprimer.Locations = {
-    'Circle' : 1,
-    'circle' : 1,
-    'Radial' : 1,
-    'radial' : 1,
-    1 : 1,
-    'Square' : 2,
-    'square' : 2,
-    2 : 2}
-
-if XYprimer.Locations[option.LocationType] == 1:
-    XYprimer.it = 1
-    XYprimer.iu = 1
-    XYprimer.AngleList = np.linspace(0, 2*pi, XYprimer.it*int(np.sqrt(option.ArraySize/option.Spacing)))
-else:
-    XYprimer.it = 1+option.ignoreborder
-    XYprimer.iu = 1+option.ignoreborder
-
-XYprimer.SpaceList = np.linspace(0, option.ArraySize, int(option.ArraySize/option.Spacing))
-XYprimer.ignore_target_porosity = 0
-XYprimer.grid_complete = 0
 
 # %% Main Body
 

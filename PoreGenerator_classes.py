@@ -2,12 +2,16 @@
 """
 Created on Fri Jul 14 13:45:18 2023
 
-@author: Jenny Shoars, ramzeek: https://stackoverflow.com/questions/47759577/creating-a-mixture-of-probability-distributions-for-sampling
 """
 import numpy as np
 import scipy.stats as stats
 
 class MixtureModel(stats.rv_continuous):
+    """
+    @author: Jenny Shoars, ramzeek: https://stackoverflow.com/questions/
+    47759577/creating-a-mixture-of-probability-distributions-for-sampling
+    """
+    
     def __init__(self, submodels, *args, weights = None, **kwargs):
         super().__init__(*args, **kwargs)
         self.submodels = submodels
@@ -40,3 +44,36 @@ class MixtureModel(stats.rv_continuous):
         submodel_samples = [submodel.rvs(size=size) for submodel in self.submodels]
         rvs = np.choose(submodel_choices, submodel_samples)
         return rvs
+    
+class XYprimer:
+    '''
+    Pre-sets some variables for choosing pore location
+    these are set for pore(n+1) when pore(n) is generated
+    '''
+    def __init__(self, option):
+        self.Locations = {
+            'Circle' : 1,
+            'circle' : 1,
+            'Radial' : 1,
+            'radial' : 1,
+            1 : 1,
+            'Square' : 2,
+            'square' : 2,
+            2 : 2}
+
+        if self.Locations[option.LocationType] == 1:
+            self.it = 1
+            self.iu = 1
+            self.AngleList = np.linspace(0, 2*np.pi, XYprimer.it*int(np.sqrt(option.ArraySize/option.Spacing)))
+
+        elif self.Locations[option.LocationType] == 2:
+            self.it = 1+option.ignoreborder
+            self.iu = 1+option.ignoreborder
+
+        if self.Locations[option.LocationType] in [1,2]:
+            self.SpaceList = np.linspace(0, option.ArraySize, int(option.ArraySize/option.Spacing))
+        
+        self.ignore_target_porosity = 0
+        self.grid_complete = 0
+        
+    
