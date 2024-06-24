@@ -165,7 +165,13 @@ def getXY(option,XYprimer):
     #   option struct contains:
     #       LocationType, location_err, ArraySize, Spacing, ignoreborder
     
-    if XYprimer.Locations[option.LocationType] == 1:
+    if option.LocationType not in XYprimer.Locations:
+        XYprimer.grid_complete = 1;
+        # random pore location
+        x = option.ArraySize*random.random()
+        y = option.ArraySize*random.random()
+        
+    elif XYprimer.Locations[option.LocationType] == 1:
         XYprimer.iu += 1
         if XYprimer.iu == len(XYprimer.AngleList):
             if XYprimer.it == len(XYprimer.SpaceList):
@@ -195,14 +201,6 @@ def getXY(option,XYprimer):
         # square grid for pore location
         x = XYprimer.SpaceList[XYprimer.it - 1] + option.location_err*(2*random.random() - 1)
         y = XYprimer.SpaceList[XYprimer.iu - 1] + option.location_err*(2*random.random() - 1)
-        
-    else:
-        XYprimer.grid_complete = 1;
-        # random pore location
-        x = option.ArraySize*random.random()
-        y = option.ArraySize*random.random()
-
-
 
     return x,y,XYprimer
 #%%              

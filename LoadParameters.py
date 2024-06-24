@@ -114,7 +114,7 @@ def LoadParameters(param_file = None):
         weighting.phi_probs = [0.5, 0.5]  # [0.5, 0.5]
         
         # Parameters for theta value selection
-        weighting.theta_values = [0,2*pi]  # [0,2*pi]
+        weighting.theta_values = [0, 2*pi]  # [0,2*pi]
         weighting.theta_probs = [1]  # [1]
         
         # Proportions of each pore shape: [Cylinder, Proximal Cone, Distal Cone,
@@ -122,7 +122,7 @@ def LoadParameters(param_file = None):
         params.shape_proportions = [0.392, 0.094, 0.351, 0.122, 0.041]  # [0.392, 0.094, 0.351, 0.122, 0.041] DOI: 10.1111/j.1439-0264.2009.00973.x
         
         params.pores_before_networking = 75  # 75
-        params.top_branches = [1,1] # [0,2]
+        params.top_branches = [0,2] # [0,2]
         params.bottom_branches = [0,2] # [0,2]
         params.sealed_osteon_chance = 0.068  # 0.068 # DOI: 10.1002/ar.21309
         params.transverse_flag_onset = pi/4  # pi/4
