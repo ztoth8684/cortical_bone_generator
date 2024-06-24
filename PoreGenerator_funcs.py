@@ -5,7 +5,10 @@ Created on Tue Sep  5 10:09:28 2023
 @author: ztoth
 """
 
+import os.path
+import sys
 import datetime
+import pickle
 import numpy as np
 import scipy.stats as stats
 import random
@@ -36,6 +39,29 @@ def nameFig(option):
             fname = option.namestyle + '.tif'
             
     return fpath,fname
+#%%
+
+def setRNG(option):
+    if option.debug == 1:
+        if os.path.isfile('./saved_rng.pkl'):
+            with open('saved_rng.pkl') as f:
+                RNGkey = pickle.load(f)
+            random.seed(RNGkey)
+    elif option.debug == 0:
+        RNGkey = random.randrange(sys.maxsize)
+        random.seed(RNGkey)
+        with open('saved_rng.pkl', 'wb') as f:
+            pickle.dump(RNGkey, f)
+    else:
+        rngseed = []
+        for character in option.debug:
+            rngseed.append(ord(character))
+        RNGkey = sum(rngseed)
+        random.seed(RNGkey)
+        with open('saved_rng.pkl', 'wb') as f:
+            pickle.dump(RNGkey, f)
+            
+    return RNGkey 
 #%%
 
 def getPD(mu,sigma,weighting,option):

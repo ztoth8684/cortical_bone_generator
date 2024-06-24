@@ -7,17 +7,15 @@ Created on Tue Jul 11 10:35:10 2023
 # set PYTHONPATH = %PYTHONPATH%; C:\Users\ztoth\Documents\Python\
 
 import os.path
-import sys
 from winsound import Beep
 import random
-import pickle
 import numpy as np
 import pandas as pd
 import tifffile as tf
 
-from numpy import cos, sin, tan, pi
+from numpy import cos, sin, tan
 
-from PoreGenerator_funcs import nameFig, getPD, getRC, networkPore, getXY, \
+from PoreGenerator_funcs import nameFig, setRNG, getPD, getRC, networkPore, getXY, \
     poreBlast, poreClast, getTextOutput, make3DModel
 import PoreGenerator_classes as PGc
 
@@ -36,24 +34,7 @@ option, target_porosity, export, mu, sigma, weighting, params = LoadParameters()
 [fpath, fname] = nameFig(option)
 
 # sets rng based on option.debug
-if option.debug == 1:
-    if os.path.isfile('./saved_rng.pkl'):
-        with open('saved_rng.pkl') as f:
-            RNGkey = pickle.load(f)
-        random.seed(RNGkey)
-elif option.debug == 0:
-    RNGkey = random.randrange(sys.maxsize)
-    random.seed(RNGkey)
-    with open('saved_rng.pkl', 'wb') as f:
-        pickle.dump(RNGkey, f)
-else:
-    rngseed = []
-    for character in option.debug:
-        rngseed.append(ord(character))
-    RNGkey = sum(rngseed)
-    random.seed(RNGkey)
-    with open('saved_rng.pkl', 'wb') as f:
-        pickle.dump(RNGkey, f)
+RNGkey = setRNG(option)
 
 # Initializes array of proper size
 Bone = np.ones((option.ArraySize, option.ArraySize, option.ArraySize), dtype=np.float32)
