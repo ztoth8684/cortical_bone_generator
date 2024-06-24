@@ -196,7 +196,8 @@ def getXY(option,XYprimer):
     #       iu, it, SpaceList, AngleList, ignore_target_porosity, grid_complete
     #   option struct contains:
     #       LocationType, location_err, ArraySize, Spacing, ignoreborder
-    if (option.LocationType in [1, 'Circle', 'Radial']):
+    
+    if XYprimer.Locations[option.LocationType] == 1:
         XYprimer.iu += 1
         if XYprimer.iu == len(XYprimer.AngleList):
             if XYprimer.it == len(XYprimer.SpaceList):
@@ -212,7 +213,7 @@ def getXY(option,XYprimer):
         x = (0.5*option.ArraySize + XYprimer.SpaceList[XYprimer.it - 1]*np.cos(XYprimer.AngleList[XYprimer.iu - 1])) + option.location_err*(2*random.random() - 1)
         y = (0.5*option.ArraySize + XYprimer.SpaceList[XYprimer.it - 1]*np.sin(XYprimer.AngleList[XYprimer.iu - 1])) + option.location_err*(2*random.random() - 1);
 
-    elif (option.LocationType in [2,'Square']):
+    elif XYprimer.Locations[option.LocationType] == 2:
         XYprimer.iu += 1
         if XYprimer.iu == len(XYprimer.SpaceList) + 1 - option.ignoreborder:
             if XYprimer.it == len(XYprimer.SpaceList) - option.ignoreborder:

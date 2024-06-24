@@ -77,7 +77,18 @@ iteration = 0
 # Pre-sets some variables for choosing pore location
 # these are set for pore(n+1) when pore(n) is generated
 XYprimer = Struct()
-if (option.LocationType in [1, 'Circle', 'Radial']):
+
+XYprimer.Locations = {
+    'Circle' : 1,
+    'circle' : 1,
+    'Radial' : 1,
+    'radial' : 1,
+    1 : 1,
+    'Square' : 2,
+    'square' : 2,
+    2 : 2}
+
+if XYprimer.Locations[option.LocationType] == 1:
     XYprimer.it = 1
     XYprimer.iu = 1
     XYprimer.AngleList = np.linspace(0, 2*pi, XYprimer.it*int(np.sqrt(option.ArraySize/option.Spacing)))
