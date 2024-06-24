@@ -15,7 +15,7 @@ import tifffile as tf
 
 from numpy import cos, sin, tan
 
-from PoreGenerator_funcs import nameFig, setRNG, getPD, getRC, networkPore, getXY, \
+from PoreGenerator_funcs import nameFig, setRNG, getRC, networkPore, getXY, \
     poreBlast, poreClast, getTextOutput, make3DModel
 import PoreGenerator_classes as PGc
 
