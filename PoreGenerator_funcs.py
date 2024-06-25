@@ -69,8 +69,7 @@ def getRC(option, PD):
     
     if option.varLink == 1:
         # linked radius and circularity
-        E = PD.SED.rvs()
-        if E <= 17:
+        if PD.SED.rvs() <= option.SED_limit:
             C = PD.Ncircularity.rvs()
             R = 0.5* PD.Ndiameter.rvs()
         else:
@@ -250,6 +249,7 @@ def getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey,
     'option.variedPoreShape' ,
     'option.ArraySize' ,
     'option.maxosteonlength' ,
+    'option.SED_limit',
     'mu.SED' ,
     'mu.Ndiameter' ,
     'mu.Ncircularity' ,
@@ -262,7 +262,6 @@ def getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey,
     'sigma.Hdiameter' ,
     'sigma.Hcircularity' ,
     'sigma.osteonlength' ,
-    'weighting.SED' ,
     'weighting.phi_values' ,
     'weighting.phi_probs' ,
     'weighting.theta_values' ,

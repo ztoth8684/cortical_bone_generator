@@ -94,9 +94,13 @@ class probability_dist:
         # SED distribution
         self.SED = stats.norm(loc=mu.SED, scale=sigma.SED)
         
+        # Calculates weighting split for unlinked distributions
+        split = lambda num: [num, 1-num]
+        SED_weighting = split(stats.norm(mu.SED, sigma.SED).cdf(option.SED_limit))
+        
         # Probability distributions for unlinked diameters and circularities    
-        self.TOTdiameter = MixtureModel([self.Ndiameter, self.Hdiameter], weighting.SED)
-        self.TOTcircularity = MixtureModel([self.Ncircularity, self.Hcircularity], weighting.SED)
+        self.TOTdiameter = MixtureModel([self.Ndiameter, self.Hdiameter], SED_weighting)
+        self.TOTcircularity = MixtureModel([self.Ncircularity, self.Hcircularity], SED_weighting)
         
         # Probability distributions for number/ length of pores
         # Minimum porosity clipped at 0.01
