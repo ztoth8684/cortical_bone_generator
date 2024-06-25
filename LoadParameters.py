@@ -44,6 +44,9 @@ def LoadParameters(param_file = None):
         # If LocationType is not random, variation of pores from grid lines
         # values 0-5 ignore target_porosity
         option.location_err = 6  # 6
+        # If LocationType is not random, stops generation after grid is complete
+        # Can cause problems if False while location_err is low
+        option.ignore_target_porosity = False
         # If LocationType is square grid, whether to generate pores along the edge.
         option.ignoreborder = False
         

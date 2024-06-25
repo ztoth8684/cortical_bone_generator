@@ -59,7 +59,7 @@ def setRNG(option):
 
 #%%
 
-def getRC(option,PD):
+def getRC(option, PD):
     #getRC(PD,option) Outputs radius and circularity values
     #
     #   Uses PD and option structs to choose method of generating radius and
@@ -98,7 +98,7 @@ def getRC(option,PD):
     return R,C
 #%%
 
-def networkPore(valueslog,minz,z,maxz,iteration):
+def networkPore(valueslog, minz, z, maxz, iteration):
     # Uses the log of previously generated pores to create new pores that branch off of them.
     #   DOI: 10.1007%2Fs11999-009-0806-x
     #[R; C; theta; phi; x; y; minz; z; maxz; isfilled; A; B]
@@ -154,7 +154,7 @@ def networkPore(valueslog,minz,z,maxz,iteration):
     return x,y,minz,z,maxz,valueslog,iteration
 #%%
 
-def getXY(option,XYprimer):
+def getXY(option, XYprimer):
     #getXY(option,XYprimer) Outputs location values and data to be used on loop
     #
     #   Uses XYprimer and option structs to choose method of generating
@@ -181,7 +181,7 @@ def getXY(option,XYprimer):
             if XYprimer.it == len(XYprimer.SpaceList) - option.ignoreborder*Square:
                 XYprimer.it = option.ignoreborder*Square
                 XYprimer.grid_complete = 1
-                if option.location_err < 6:
+                if option.ignore_target_porosity:
                     XYprimer.ignore_target_porosity = 1
                 XYprimer.it += 1
                 XYprimer.iu = 1 + option.ignoreborder*Square
