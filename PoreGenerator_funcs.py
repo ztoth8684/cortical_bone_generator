@@ -38,19 +38,19 @@ def nameFig(option):
 def setRNG(option):
     '''sets RNG seed value for generation'''
     
-    if option.debug == 1:
+    if option.rng_method == 1:
         if os.path.isfile('./saved_rng.pkl'):
             with open('saved_rng.pkl') as f:
                 RNGkey = pickle.load(f)
             random.seed(RNGkey)
-    elif option.debug == 0:
+    elif option.rng_method == 0:
         RNGkey = random.randrange(sys.maxsize)
         random.seed(RNGkey)
         with open('saved_rng.pkl', 'wb') as f:
             pickle.dump(RNGkey, f)
     else:
         rngseed = []
-        for character in option.debug:
+        for character in option.rng_method:
             rngseed.append(ord(character))
         RNGkey = sum(rngseed)
         random.seed(RNGkey)

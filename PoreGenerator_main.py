@@ -32,7 +32,7 @@ option, target_porosity, export, mu, sigma, weighting, params = LoadParameters()
 # set file name
 [fpath, fname] = nameFig(option)
 
-# sets rng based on option.debug
+# sets rng based on option.rng_method
 RNGkey = setRNG(option)
 
 # Initializes array of proper size

@@ -27,7 +27,7 @@ def LoadParameters(param_file = None):
         # Set to False to use random seed.
         # Set to True to keep the same seed used last generation. 
         # Any other value will be used as a seed.
-        option.debug = False
+        option.rng_method = False
         # 'Timestamp' or name to be used
         option.namestyle = 'Timestamp' # 'Timestamp'
 
