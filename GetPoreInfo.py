@@ -16,8 +16,6 @@ from winsound import Beep
 
 from ccl_gh_pages.ccl import connected_component_labelling
 
-class Struct:
-    pass
 
 #%% Get Array from TIFF file
 
