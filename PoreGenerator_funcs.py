@@ -17,9 +17,9 @@ import meshlib.mrmeshnumpy as mrn
 #%%
 
 def nameFig(option):
-    # sets name for the file generated
+    '''sets name for the file generated'''
+    
     # File name:
-    # fpath = 'C:\\Users\\ztoth\\Documents\\GitHub\\cortical_bone_generator\\pore_files\\'
     fpath = './pore_files/'
     if option.namestyle == 'Timestamp':
         clock_ = datetime.datetime.now()
@@ -36,6 +36,8 @@ def nameFig(option):
 #%%
 
 def setRNG(option):
+    '''sets RNG seed value for generation'''
+    
     if option.debug == 1:
         if os.path.isfile('./saved_rng.pkl'):
             with open('saved_rng.pkl') as f:
@@ -60,17 +62,10 @@ def setRNG(option):
 #%%
 
 def getRC(option, PD):
-    #getRC(PD,option) Outputs radius and circularity values
-    #
-    #   Uses PD and option structs to choose method of generating radius and
-    #   circularity
-    #
-    #   PD struct contains:
-    #       Ncircularity, Ndiameter, Hcircularity, Hdiameter, SED, TOTdiameter, 
-    #       TOTcircularity
-    #   option struct contains:
-    #       varLink, LinearDiscreteDiameters, WeightedDiscreteDiameters, 
-    #       LinearDiscreteCircularities, WeightedDiscreteCircularities
+    '''
+    Outputs radius and circularity values
+    Uses PD and option structs to choose method of generating radius and circularity
+    '''
     
     if option.varLink == 1:
         # linked radius and circularity
@@ -99,9 +94,11 @@ def getRC(option, PD):
 #%%
 
 def networkPore(valueslog, minz, z, maxz, iteration):
-    # Uses the log of previously generated pores to create new pores that branch off of them.
-    #   DOI: 10.1007%2Fs11999-009-0806-x
-    #[R; C; theta; phi; x; y; minz; z; maxz; isfilled; A; B]
+    '''
+    Uses the log of previously generated pores to create new pores that branch off of them.
+       DOI: 10.1007%2Fs11999-009-0806-x
+    [R; C; theta; phi; x; y; minz; z; maxz; isfilled; A; B]
+    '''
     
     # minz and maxz expressed as offset from z
     maxz = maxz - z
@@ -155,15 +152,10 @@ def networkPore(valueslog, minz, z, maxz, iteration):
 #%%
 
 def getXY(option, XYprimer):
-    #getXY(option,XYprimer) Outputs location values and data to be used on loop
-    #
-    #   Uses XYprimer and option structs to choose method of generating
-    #   location
-    #
-    #   XYprimer struct contains:
-    #       iu, it, SpaceList, AngleList, ignore_target_porosity, grid_complete
-    #   option struct contains:
-    #       LocationType, location_err, ArraySize, Spacing, ignoreborder
+    '''
+    Outputs location values and data to be used on loop
+    Uses XYprimer and option structs to choose method of generating location
+    '''
     
     Circle = XYprimer.Locations[option.LocationType] == 1
     Square = XYprimer.Locations[option.LocationType] == 2
@@ -201,7 +193,7 @@ def getXY(option, XYprimer):
 #%%              
               
 def poreBlast(Bone):
-    # 'deposits' bone matrix -> decrease porosity (more 1's)
+    '''deposits bone matrix -> decrease porosity (more 1's)'''
         
     adjacency = [(i,j,k) for i in (-1,0,1) for j in (-1,0,1) for k in (-1,0,1) if not (i == j == k == 0)] #the adjacency matrix
 
@@ -221,7 +213,7 @@ def poreBlast(Bone):
 #%%
 
 def poreClast(Bone):
-    # 'removes' bone matrix -> increase porosity (more 0's)
+    '''removes bone matrix -> increase porosity (more 0's)'''
     
     adjacency = [(i,j,k) for i in (-1,0,1) for j in (-1,0,1) for k in (-1,0,1) if not (i == j == k == 0)] #the adjacency matrix
 
@@ -248,6 +240,7 @@ def getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey,
     'option.LocationType' ,
     'option.Spacing' ,
     'option.location_err' ,
+    'option.ignore_target_porosity',
     'option.ignoreborder' ,
     'option.LinearDiscreteDiameters' ,
     'option.WeightedDiscreteDiameters' ,
@@ -272,6 +265,8 @@ def getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey,
     'weighting.SED' ,
     'weighting.phi_values' ,
     'weighting.phi_probs' ,
+    'weighting.theta_values' ,
+    'weighting.theta_probs' ,
     'target_porosity' ,
     'params.pores_before_networking' ,
     'params.top_branches' ,
@@ -302,11 +297,11 @@ def getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey,
 #%%
 
 def make3DModel(fpath, fname, Bone):
+    '''Converts array to STL'''
     
     Bone32 = np.float32(~Bone)
     simpleVolume = mrn.simpleVolumeFrom3Darray(Bone32)
     floatGrid = mr.simpleVolumeToDenseGrid(simpleVolume)
     mesh = mr.gridToMesh(floatGrid, mr.Vector3f(0.1,0.1,0.1),0.5)
     mr.saveMesh(mesh, fpath+fname.removesuffix('.tif')+'.stl')
-    
     
