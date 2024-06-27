@@ -296,11 +296,16 @@ def getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey,
 #%%
 
 def make3DModel(fpath, fname, Bone):
-    '''Converts array to STL'''
+    '''
+    Converts array to STL
+    Credit to Aleksandr Burakov, https://stackoverflow.com/questions/69524209/how-to-generate-3d-mesh-from-a-numpy-binary-mask
+    '''
+    # Mesh elements per voxel side length
+    res = (2)**-1
     
     Bone32 = np.float32(~Bone)
     simpleVolume = mrn.simpleVolumeFrom3Darray(Bone32)
     floatGrid = mr.simpleVolumeToDenseGrid(simpleVolume)
-    mesh = mr.gridToMesh(floatGrid, mr.Vector3f(0.1,0.1,0.1),0.5)
+    mesh = mr.gridToMesh(floatGrid, mr.Vector3f(res, res, res), 0.5)
     mr.saveMesh(mesh, fpath+fname.removesuffix('.tif')+'.stl')
     
