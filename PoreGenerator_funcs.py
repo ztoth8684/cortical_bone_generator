@@ -301,11 +301,11 @@ def make3DModel(fpath, fname, Bone):
     Credit to Aleksandr Burakov, https://stackoverflow.com/questions/69524209/how-to-generate-3d-mesh-from-a-numpy-binary-mask
     '''
     # Mesh elements per voxel side length
-    res = (2)**-1
+    res = 1
     
     Bone32 = np.float32(~Bone)
     simpleVolume = mrn.simpleVolumeFrom3Darray(Bone32)
     floatGrid = mr.simpleVolumeToDenseGrid(simpleVolume)
-    mesh = mr.gridToMesh(floatGrid, mr.Vector3f(res, res, res), 0.5)
+    mesh = mr.gridToMesh(floatGrid, mr.Vector3f(1/res, 1/res, 1/res), 0.5)
     mr.saveMesh(mesh, fpath+fname.removesuffix('.tif')+'.stl')
     
