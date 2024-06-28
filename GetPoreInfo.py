@@ -13,6 +13,7 @@ import cProfile
 import pstats
 from skimage import io
 from winsound import Beep
+import tifffile as tf
 
 from ccl_gh_pages.ccl import connected_component_labelling
 
@@ -35,7 +36,20 @@ def importBone(fpath, fname):
     
     return Bone
 
-# %%  Get Data for ,tif files in folder
+# %% Functions for modifying images for 2D viewing in ImageJ
+
+def rotateBone(fpath, fname):
+    Bone = importBone(fpath, fname)
+    Bone = np.rot90(Bone, axes=(0,2))
+    tf.imsave(fpath+fname, Bone)
+    
+def invertBone(fpath, fname):
+    Bone = importBone(fpath, fname)
+    Bone = ~(Bone.astype(bool))
+    Bone = np.float32(Bone)
+    tf.imsave(fpath+fname, Bone)
+
+# %%  Get Data for .tif files in folder
 
 def GetPoreData(file_directory = None):
 
