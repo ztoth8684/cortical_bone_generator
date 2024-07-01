@@ -82,15 +82,44 @@ class XYprimer:
 #%%
 
 class probability_dist:
+    def trunc_dist(self, mu, sigma, lower, upper):
+        # reindexes limits according to truncnorm documentation
+        a = (lower - mu)/sigma
+        b = (upper - mu)/sigma
+        dist = stats.truncnorm(a=a, b=b, loc=mu, scale=sigma)
+        
+        return dist
+    
+    def span_dist(self, values, probs, rand_range):
+        '''
+        Creates a distribution broken into weighted self-uniform spans
+        
+        values defines the bounds between each span
+        probs defines the weightings of each span
+        rand_range is a two-length vector that defines the 'random' generation limits
+        '''
+        if values == 'rand':
+            dist = stats.uniform(loc=rand_range[0], scale=rand_range[1])
+        elif len(values) == 1:
+            dist = stats.uniform(loc=values, scale = 0)
+        else:
+            dist_vector = len(probs)*[0]
+        
+            for n in range(len(dist_vector)):
+                dist_vector[n] = stats.uniform(loc=values[n], scale=(values[n+1]-values[n]))
+            dist = MixtureModel(dist_vector, weights=probs)
+    
+        return dist
+    
     def __init__(self, mu, sigma, weighting, option):
 
         # Probability distributions for linked diameters and circularities 
         # Normal SED (small, regular pores)
         self.Ncircularity = stats.norm(loc=mu.Ncircularity, scale=sigma.Ncircularity)
-        self.Ndiameter = stats.truncnorm(a=((option.mindiameter-mu.Ndiameter)/sigma.Ndiameter) ,b=np.Inf,loc=mu.Ndiameter, scale=sigma.Ndiameter)
+        self.Ndiameter = self.trunc_dist(option.mindiameter, np.Inf, mu.Ndiameter, sigma.Ndiameter)
         # High SED (larger, irregular pores)
         self.Hcircularity = stats.norm(loc=mu.Hcircularity, scale=sigma.Hcircularity)
-        self.Hdiameter = stats.truncnorm(a=((option.mindiameter-mu.Hdiameter)/sigma.Hdiameter), b=np.Inf,loc=mu.Hdiameter, scale=sigma.Hdiameter)
+        self.Hdiameter = self.trunc_dist(option.mindiameter, np.Inf, mu.Hdiameter, sigma.Hdiameter)
         # SED distribution
         self.SED = stats.norm(loc=mu.SED, scale=sigma.SED)
         
@@ -104,30 +133,13 @@ class probability_dist:
         
         # Probability distributions for number/ length of pores
         # Minimum porosity clipped at 0.01
-        self.porosity = stats.truncnorm(a=((0.01-mu.porosity)/sigma.porosity), b=np.Inf, loc=mu.porosity, scale=sigma.porosity)
+        self.porosity = self.trunc_dist(mu.porosity, sigma.porosity, 0.01, np.Inf)
         # Maximum clipped at maxosteonlength
-        self.osteonlength = stats.truncnorm(a=(-mu.osteonlength/sigma.osteonlength), b=((option.maxosteonlength-mu.osteonlength)/sigma.osteonlength), loc=mu.osteonlength, scale=sigma.osteonlength)
+        self.osteonlength = self.trunc_dist(mu.osteonlength, sigma.osteonlength, 0, option.maxosteonlength)
         
         # Probability distributions for azimuthal angle
-        if weighting.phi_values == 'rand':
-            self.phi = stats.uniform(loc=0, scale = 0.5*np.pi)
-        elif len(weighting.phi_values) == 1:
-            self.phi = stats.uniform(loc=weighting.phi_values, scale = 0)
-        else:
-            self.phi = len(weighting.phi_probs)*[0]
-        
-            for n in range(len(self.phi)):
-                self.phi[n] = stats.uniform(loc=weighting.phi_values[n], scale=weighting.phi_values[n+1]-weighting.phi_values[n])
-            self.phi = MixtureModel(self.phi,weights= weighting.phi_probs)
+        self.phi = self.span_dist(weighting.phi_values, weighting.phi_probs, [0, 0.5*np.pi])
         
         # Probability distributions for radial angle
-        if weighting.theta_values == 'rand':
-            self.theta = stats.uniform(loc=0, scale = 2*np.pi)
-        elif len(weighting.theta_values) == 1:
-            self.theta = stats.uniform(loc=weighting.theta_values, scale = 0)
-        else:
-            self.theta = len(weighting.theta_probs)*[0]
-            
-            for n in range(len(self.theta)):
-                self.theta[n] = stats.uniform(loc=weighting.theta_values[n], scale=weighting.theta_values[n+1]-weighting.theta_values[n])
-            self.theta = MixtureModel(self.theta,weights= weighting.theta_probs)
+        self.theta = self.span_dist(weighting.theta_values, weighting.theta_probs, [0, 2*np.pi])
+        
