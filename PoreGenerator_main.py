@@ -15,7 +15,7 @@ import tifffile as tf
 
 from numpy import cos, sin, tan
 
-from PoreGenerator_funcs import nameFig, setRNG, getRC, networkPore, getXY, \
+from PoreGenerator_funcs import nameFig, setRNG, getPD, getRC, networkPore, getXY, \
     poreBlast, poreClast, getTextOutput, make3DModel
 import PoreGenerator_classes as PGc
 
@@ -40,13 +40,14 @@ Bone = np.ones((option.ArraySize, option.ArraySize, option.ArraySize), dtype=np.
 # Sets up indexing of Bone array for use in calculations
 [ii,ij,ik] = np.unravel_index(np.arange(option.ArraySize**3), [option.ArraySize, option.ArraySize, option.ArraySize], 'F')
 
-PD = PGc.probability_dist(mu, sigma, weighting, option)
+PD = getPD(mu, sigma, weighting, option)
+# PD = PGc.probability_dist(mu, sigma, weighting, option)
 
 # Chooses target_porosity Value from experimental distribution
 if target_porosity == 'Exp':
     target_porosity = PD.porosity.rvs(1)[0]
 
-# readjusts target_porosity to account for loss when mergePores is used
+# readjusts target_porosity to account for loss when smoothPores is used
 if option.smoothPores is True:
     target_porosity = target_porosity/0.739
 

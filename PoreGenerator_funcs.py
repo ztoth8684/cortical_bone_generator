@@ -10,9 +10,14 @@ import sys
 import datetime
 import pickle
 import numpy as np
+import scipy.stats as stats
 import random
 import meshlib.mrmeshpy as mr
 import meshlib.mrmeshnumpy as mrn
+
+from PoreGenerator_classes import MixtureModel
+class Struct:
+    pass
 
 #%%
 
@@ -40,7 +45,7 @@ def setRNG(option):
     
     if option.rng_method == 1:
         if os.path.isfile('./saved_rng.pkl'):
-            with open('saved_rng.pkl') as f:
+            with open('saved_rng.pkl', 'rb') as f:
                 RNGkey = pickle.load(f)
             random.seed(RNGkey)
     elif option.rng_method == 0:
@@ -58,6 +63,70 @@ def setRNG(option):
             pickle.dump(RNGkey, f)
             
     return RNGkey 
+
+#%%
+
+def getPD(mu,sigma,weighting,option):
+    PD = Struct()
+    #getPD(mu,sigma,weighting,mindiameter) Outputs Probablility Distributions
+    #
+    #   Uses PD and option structs to choose method of generating radius and
+    #   circularity
+    #
+    #   mu, sigma, and PD structs contain:
+    #       Ncircularity, Ndiameter, Hcircularity, Hdiameter, SED, TOTdiameter, 
+    #       TOTcircularity
+
+    # Probability distributions for linked diameters and circularities
+    # Normal SED (small, regular pores)
+    PD.Ncircularity = stats.norm(loc=mu.Ncircularity, scale=sigma.Ncircularity)
+    PD.Ndiameter = stats.truncnorm(a=((option.mindiameter-mu.Ndiameter)/sigma.Ndiameter) ,b=np.Inf,loc=mu.Ndiameter, scale=sigma.Ndiameter)
+    # High SED (larger, irregular pores)
+    PD.Hcircularity = stats.norm(loc=mu.Hcircularity, scale=sigma.Hcircularity)
+    PD.Hdiameter = stats.truncnorm(a=((option.mindiameter-mu.Hdiameter)/sigma.Hdiameter), b=np.Inf,loc=mu.Hdiameter, scale=sigma.Hdiameter)
+    # SED distribution
+    PD.SED = stats.norm(loc=mu.SED, scale=sigma.SED)
+
+    # Calculates weighting split for unlinked distributions
+    split = lambda num: [num, 1-num]
+    SED_weighting = split(stats.norm(mu.SED, sigma.SED).cdf(option.SED_limit))
+
+    # Probability distributions for unlinked diameters and circularities    
+    PD.TOTdiameter = MixtureModel([PD.Ndiameter, PD.Hdiameter], SED_weighting)
+    PD.TOTcircularity = MixtureModel([PD.Ncircularity, PD.Hcircularity],SED_weighting)
+
+    # Probability distributions for number/ length of pores
+    # Minimum porosity clipped at 0.01
+    PD.porosity = stats.truncnorm(a=((0.01-mu.porosity)/sigma.porosity) ,b=np.Inf,loc=mu.porosity, scale=sigma.porosity)
+    # Maximum clipped at maxosteonlength
+    PD.osteonlength = stats.truncnorm(a=(-mu.osteonlength/sigma.osteonlength) ,b=((option.maxosteonlength-mu.osteonlength)/sigma.osteonlength),loc=mu.osteonlength, scale=sigma.osteonlength)
+
+    # Probability distributions for azimuthal angle
+    if weighting.phi_values == 'rand':
+        PD.phi = stats.uniform(loc=0, scale = 0.5*np.pi)
+    elif len(weighting.phi_values) == 1:
+        PD.phi = stats.uniform(loc=weighting.phi_values, scale = 0)
+    else:
+        PD.phi = len(weighting.phi_probs)*[0]
+
+        for n in range(len(PD.phi)):
+            PD.phi[n] = stats.uniform(loc=weighting.phi_values[n], scale=weighting.phi_values[n+1]-weighting.phi_values[n])
+        PD.phi = MixtureModel(PD.phi,weights= weighting.phi_probs)
+
+    # Probability distributions for radial angle
+    if weighting.theta_values == 'rand':
+        PD.theta = stats.uniform(loc=0, scale = 2*np.pi)
+    elif len(weighting.theta_values) == 1:
+        PD.theta = stats.uniform(loc=weighting.theta_values, scale = 0)
+    else:
+        PD.theta = len(weighting.theta_probs)*[0]
+
+        for n in range(len(PD.theta)):
+            PD.theta[n] = stats.uniform(loc=weighting.theta_values[n], scale=weighting.theta_values[n+1]-weighting.theta_values[n])
+        PD.theta = MixtureModel(PD.theta,weights= weighting.theta_probs)
+
+    return PD
+
 
 #%%
 
@@ -156,9 +225,6 @@ def getXY(option, XYprimer):
     Uses XYprimer and option structs to choose method of generating location
     '''
     
-    Circle = XYprimer.Locations[option.LocationType] == 1
-    Square = XYprimer.Locations[option.LocationType] == 2
-    
     if option.LocationType not in XYprimer.Locations:
         XYprimer.grid_complete = 1;
         # random pore location
@@ -166,6 +232,10 @@ def getXY(option, XYprimer):
         y = option.ArraySize*random.random()
 
     elif XYprimer.Locations[option.LocationType] in [1, 2]:
+        
+        Circle = XYprimer.Locations[option.LocationType] == 1
+        Square = XYprimer.Locations[option.LocationType] == 2
+        
         XYprimer.iu += 1
         if (XYprimer.iu == (len(XYprimer.AngleList))*Circle 
             + (len(XYprimer.SpaceList) + 1 - option.ignoreborder)*Square ):
