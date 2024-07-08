@@ -269,9 +269,9 @@ def poreBlast(Bone):
     BoneMerger = np.zeros(Bone.shape, dtype=object)
     BoneOrig = Bone
 
-    for ia in range(2,Bone.shape[0]-1):
-        for ib in range(2,Bone.shape[1]-1):
-            for ic in range(2,Bone.shape[2]-1):
+    for ia in range(1,Bone.shape[0]-1):
+        for ib in range(1,Bone.shape[1]-1):
+            for ic in range(1,Bone.shape[2]-1):
                 if BoneOrig[ia,ib,ic] == 0:
                     BoneMerger[ia,ib,ic] = [BoneOrig[ia+dx, ib+dy, ic+dz] for dx, dy, dz in adjacency]
                     BoneMerger[ia,ib,ic] = sum(list(map(int,BoneMerger[ia,ib,ic])))
@@ -289,9 +289,9 @@ def poreClast(Bone):
     BoneMerger = np.zeros(Bone.shape, dtype=object)
     BoneOrig = Bone
     
-    for ia in range(2,Bone.shape[0]-1):
-        for ib in range(2,Bone.shape[1]-1):
-            for ic in range(2,Bone.shape[2]-1):
+    for ia in range(1,Bone.shape[0]-1):
+        for ib in range(1,Bone.shape[1]-1):
+            for ic in range(1,Bone.shape[2]-1):
                 if BoneOrig[ia,ib,ic] == 1:
                     BoneMerger[ia,ib,ic] = [BoneOrig[ia+dx, ib+dy, ic+dz] for dx, dy, dz in adjacency]
                     BoneMerger[ia,ib,ic] = sum(list(map(int,BoneMerger[ia,ib,ic])))
