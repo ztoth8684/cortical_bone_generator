@@ -27,9 +27,9 @@ def LoadParameters(param_file = None):
         # Set to False to use random seed.
         # Set to True to keep the same seed used last generation. 
         # Any other value will be used as a seed.
-        option.rng_method = False
+        option.rng_method = True
         # 'Timestamp' or name to be used
-        option.namestyle = 'Timestamp' # 'Timestamp'
+        option.namestyle = 'Jagged10.tif' # 'Timestamp'
 
         # True if variation in diameter and circularity should be linked
         # eg, large pored would tend to also be oblong
@@ -64,7 +64,7 @@ def LoadParameters(param_file = None):
         option.WeightedDiscreteCircularities = []
         
         # True if nearby pores should be smoothed and merged
-        option.smoothPores = True
+        option.smoothPores = False
         
         # True if pores should have varying shape (cylinder,cone,ellipsoid,hyperboloid)
         option.variedPoreShape = True
@@ -72,7 +72,7 @@ def LoadParameters(param_file = None):
         # 10 micrometers/voxel
         option.ArraySize = 200  # 200
         # 'Exp' to choose value from experimental distribution
-        target_porosity = 'Exp'  # 'Exp'
+        target_porosity = 0.10  # 'Exp'
 
         # Files to Export: Excel, Text, TIFF Stack, STL
         export.xcls = True

@@ -48,8 +48,9 @@ if target_porosity == 'Exp':
     target_porosity = PD.porosity.rvs(1)[0]
 
 # readjusts target_porosity to account for loss when smoothPores is used
+TP_CORRECTION_FACTOR = 1
 if option.smoothPores is True:
-    target_porosity = target_porosity/0.739
+    target_porosity = target_porosity/TP_CORRECTION_FACTOR
 
 # creates log for use in pore networking
 valueslog = np.zeros([12, int(round(7_000_000*target_porosity/mu.osteonlength, ndigits=-3))])
@@ -133,8 +134,9 @@ if option.smoothPores == 1:
             Bone = poreBlast(Bone)
         else:
             Bone = poreClast(Bone)
+
     # reverts target_porosity for bookkeeping
-    target_porosity = target_porosity*0.739
+    target_porosity = target_porosity*TP_CORRECTION_FACTOR
 
 Bone = ~(Bone.astype(bool))
 

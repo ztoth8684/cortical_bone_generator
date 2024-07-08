@@ -80,7 +80,7 @@ class XYprimer:
         self.ignore_target_porosity = 0
         self.grid_complete = 0
 #%%
-
+'''
 class probability_dist:
     def trunc_dist(self, mu, sigma, lower, upper):
         # reindexes limits according to truncnorm documentation
@@ -91,13 +91,13 @@ class probability_dist:
         return dist
     
     def span_dist(self, values, probs, rand_range):
-        '''
+        ''''''
         Creates a distribution broken into weighted self-uniform spans
         
         values defines the bounds between each span
         probs defines the weightings of each span
         rand_range is a two-length vector that defines the 'random' generation limits
-        '''
+        ''''''
         if values == 'rand':
             dist = stats.uniform(loc=rand_range[0], scale=rand_range[1])
         elif len(values) == 1:
@@ -142,4 +142,4 @@ class probability_dist:
         
         # Probability distributions for radial angle
         self.theta = self.span_dist(weighting.theta_values, weighting.theta_probs, [0, 2*np.pi])
-        
+'''
