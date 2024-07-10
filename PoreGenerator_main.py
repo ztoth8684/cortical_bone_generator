@@ -15,8 +15,7 @@ import tifffile as tf
 
 from numpy import cos, sin, tan
 
-from PoreGenerator_funcs import nameFig, setRNG, getPD, getRC, networkPore, getXY, \
-    poreBlast, poreClast, getTextOutput, make3DModel
+import PoreGenerator_funcs as PGf
 import PoreGenerator_classes as PGc
 
 from LoadParameters import LoadParameters
@@ -30,17 +29,17 @@ class Struct:
 option, target_porosity, export, mu, sigma, weighting, params = LoadParameters()
 
 # set file name
-[fpath, fname] = nameFig(option)
+[fpath, fname] = PGf.nameFig(option)
 
 # sets rng based on option.rng_method
-RNGkey = setRNG(option)
+RNGkey = PGf.setRNG(option)
 
 # Initializes array of proper size
 Bone = np.ones((option.ArraySize, option.ArraySize, option.ArraySize), dtype=np.float32)
 # Sets up indexing of Bone array for use in calculations
 [ii,ij,ik] = np.unravel_index(np.arange(option.ArraySize**3), [option.ArraySize, option.ArraySize, option.ArraySize], 'F')
 
-PD = getPD(mu, sigma, weighting, option)
+PD = PGf.getPD(mu, sigma, weighting, option)
 # PD = PGc.probability_dist(mu, sigma, weighting, option)
 
 # Chooses target_porosity Value from experimental distribution
@@ -65,7 +64,7 @@ XYprimer = PGc.XYprimer(option)
 
 while ((1-np.mean(Bone) < target_porosity) and (XYprimer.ignore_target_porosity == 0)) or (XYprimer.grid_complete == 0):
 
-    [R, C] = getRC(option, PD)
+    [R, C] = PGf.getRC(option, PD)
     z = random.random() * option.ArraySize
     # theta is angle of trajectory, phi is angle of depression
     theta = PD.theta.rvs(1)
@@ -78,9 +77,9 @@ while ((1-np.mean(Bone) < target_porosity) and (XYprimer.ignore_target_porosity 
     maxz = z + cos(phi)*0.5*PD.osteonlength.rvs(1)[0]
 
     if sum(valueslog[10,:]) > params.pores_before_networking and random.random() > params.sealed_osteon_chance:
-        [x,y,minz,z,maxz,valueslog,iteration] = networkPore(valueslog,minz,z,maxz,iteration)
+        [x,y,minz,z,maxz,valueslog,iteration] = PGf.networkPore(valueslog,minz,z,maxz,iteration)
     else:
-        [x, y, XYprimer] = getXY(option, XYprimer)
+        [x, y, XYprimer] = PGf.getXY(option, XYprimer)
 
     if phi > params.transverse_flag_onset:
         miny = y - sin(phi) * PD.osteonlength.rvs(1)[0] * 0.25
@@ -131,9 +130,9 @@ while ((1-np.mean(Bone) < target_porosity) and (XYprimer.ignore_target_porosity 
 if option.smoothPores == 1:
     for n in range(10):
         if random.randint(0, 1) == 0:
-            Bone = poreBlast(Bone)
+            Bone = PGf.poreBlast(Bone)
         else:
-            Bone = poreClast(Bone)
+            Bone = PGf.poreClast(Bone)
 
     # reverts target_porosity for bookkeeping
     target_porosity = target_porosity*TP_CORRECTION_FACTOR
@@ -142,7 +141,7 @@ Bone = ~(Bone.astype(bool))
 
 # %% Save Results
 
-fullcell, sheetprep, sheetcell = getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey, fname)
+fullcell, sheetprep, sheetcell = PGf.getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey, fname)
 if export.xcls is True:
     spreadsheet_name = 'Metadata.xlsx'
     if os.path.isfile(fpath+spreadsheet_name) is False:
@@ -166,7 +165,7 @@ if export.tiff is True:
     tf.imsave(fpath+fname, Bone)
 
 if export.stl is True:
-    make3DModel(fpath, fname, Bone)
+    PGf.make3DModel(fpath, fname, Bone)
 
 
 Beep(500,500)

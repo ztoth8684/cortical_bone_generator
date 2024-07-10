@@ -15,7 +15,7 @@ from skimage import io
 from winsound import Beep
 import tifffile as tf
 
-from ccl_gh_pages.ccl import connected_component_labelling
+from ccl.ccl import connected_component_labelling
 
 
 #%% Get Array from TIFF file
