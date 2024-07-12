@@ -43,7 +43,7 @@ PD = PGf.getPD(mu, sigma, weighting, option)
 # PD = PGc.probability_dist(mu, sigma, weighting, option)
 
 # Chooses target_porosity Value from experimental distribution
-if target_porosity == 'Exp':
+if target_porosity in {'Exp', 'EXP'}:
     target_porosity = PD.porosity.rvs(1)[0]
 
 # readjusts target_porosity to account for loss when smoothPores is used

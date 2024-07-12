@@ -76,14 +76,43 @@ def getPD(mu,sigma,weighting,option):
     #   mu, sigma, and PD structs contain:
     #       Ncircularity, Ndiameter, Hcircularity, Hdiameter, SED, TOTdiameter, 
     #       TOTcircularity
-
+    
+    def trunc_dist(mu, sigma, lower, upper):
+        # reindexes limits according to truncnorm documentation
+        a = (lower - mu)/sigma
+        b = (upper - mu)/sigma
+        dist = stats.truncnorm(a=a, b=b, loc=mu, scale=sigma)
+        
+        return dist
+    
+    def span_dist(values, probs, rand_range):
+        '''
+        Creates a distribution broken into weighted self-uniform spans
+        
+        values defines the bounds between each span
+        probs defines the weightings of each span
+        rand_range is a two-length vector that defines the 'random' generation limits
+        '''
+        if values == 'rand':
+            dist = stats.uniform(loc=rand_range[0], scale=rand_range[1])
+        elif len(values) == 1:
+            dist = stats.uniform(loc=values, scale = 0)
+        else:
+            dist_vector = len(probs)*[0]
+        
+            for n in range(len(dist_vector)):
+                dist_vector[n] = stats.uniform(loc=values[n], scale=(values[n+1]-values[n]))
+            dist = MixtureModel(dist_vector, weights=probs)
+    
+        return dist
+    
     # Probability distributions for linked diameters and circularities
     # Normal SED (small, regular pores)
     PD.Ncircularity = stats.norm(loc=mu.Ncircularity, scale=sigma.Ncircularity)
-    PD.Ndiameter = stats.truncnorm(a=((option.mindiameter-mu.Ndiameter)/sigma.Ndiameter) ,b=np.Inf,loc=mu.Ndiameter, scale=sigma.Ndiameter)
+    PD.Ndiameter = trunc_dist(option.mindiameter, np.Inf, mu.Ndiameter, sigma.Ndiameter)
     # High SED (larger, irregular pores)
     PD.Hcircularity = stats.norm(loc=mu.Hcircularity, scale=sigma.Hcircularity)
-    PD.Hdiameter = stats.truncnorm(a=((option.mindiameter-mu.Hdiameter)/sigma.Hdiameter), b=np.Inf,loc=mu.Hdiameter, scale=sigma.Hdiameter)
+    PD.Hdiameter = trunc_dist(option.mindiameter, np.Inf, mu.Hdiameter, sigma.Hdiameter)
     # SED distribution
     PD.SED = stats.norm(loc=mu.SED, scale=sigma.SED)
 
@@ -97,33 +126,14 @@ def getPD(mu,sigma,weighting,option):
 
     # Probability distributions for number/ length of pores
     # Minimum porosity clipped at 0.01
-    PD.porosity = stats.truncnorm(a=((0.01-mu.porosity)/sigma.porosity) ,b=np.Inf,loc=mu.porosity, scale=sigma.porosity)
+    PD.porosity = trunc_dist(mu.porosity, sigma.porosity, 0.01, np.Inf)
     # Maximum clipped at maxosteonlength
-    PD.osteonlength = stats.truncnorm(a=(-mu.osteonlength/sigma.osteonlength) ,b=((option.maxosteonlength-mu.osteonlength)/sigma.osteonlength),loc=mu.osteonlength, scale=sigma.osteonlength)
+    PD.osteonlength = trunc_dist(mu.osteonlength, sigma.osteonlength, 0, option.maxosteonlength)
 
     # Probability distributions for azimuthal angle
-    if weighting.phi_values == 'rand':
-        PD.phi = stats.uniform(loc=0, scale = 0.5*np.pi)
-    elif len(weighting.phi_values) == 1:
-        PD.phi = stats.uniform(loc=weighting.phi_values, scale = 0)
-    else:
-        PD.phi = len(weighting.phi_probs)*[0]
-
-        for n in range(len(PD.phi)):
-            PD.phi[n] = stats.uniform(loc=weighting.phi_values[n], scale=weighting.phi_values[n+1]-weighting.phi_values[n])
-        PD.phi = MixtureModel(PD.phi,weights= weighting.phi_probs)
-
+    PD.phi = span_dist(weighting.phi_values, weighting.phi_probs, [0, 0.5*np.pi])
     # Probability distributions for radial angle
-    if weighting.theta_values == 'rand':
-        PD.theta = stats.uniform(loc=0, scale = 2*np.pi)
-    elif len(weighting.theta_values) == 1:
-        PD.theta = stats.uniform(loc=weighting.theta_values, scale = 0)
-    else:
-        PD.theta = len(weighting.theta_probs)*[0]
-
-        for n in range(len(PD.theta)):
-            PD.theta[n] = stats.uniform(loc=weighting.theta_values[n], scale=weighting.theta_values[n+1]-weighting.theta_values[n])
-        PD.theta = MixtureModel(PD.theta,weights= weighting.theta_probs)
+    PD.theta = span_dist(weighting.theta_values, weighting.theta_probs, [0, 2*np.pi])
 
     return PD
 
