@@ -141,6 +141,9 @@ Bone = ~(Bone.astype(bool))
 
 # %% Save Results
 
+if os.path.isdir(fpath) is False:
+    os.makedirs(fpath)
+
 fullcell, sheetprep, sheetcell = PGf.getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey, fname)
 if export.xcls is True:
     spreadsheet_name = 'Metadata.xlsx'
