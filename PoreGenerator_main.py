@@ -69,6 +69,8 @@ while ((1-np.mean(Bone) < target_porosity) and (XYprimer.ignore_target_porosity 
     # theta is angle of trajectory, phi is angle of depression
     theta = PD.theta.rvs(1)
     phi = PD.phi.rvs(1)
+    if phi == np.pi/2:
+        phi = np.pi/2 - 0.001
 
     # Correction factor (phi is also correcting things in eqn)
     C = C/cos(phi)
