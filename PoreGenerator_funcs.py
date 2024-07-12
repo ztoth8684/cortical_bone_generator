@@ -77,14 +77,6 @@ def getPD(mu,sigma,weighting,option):
     #       Ncircularity, Ndiameter, Hcircularity, Hdiameter, SED, TOTdiameter, 
     #       TOTcircularity
     
-    def trunc_dist(mu, sigma, lower, upper):
-        # reindexes limits according to truncnorm documentation
-        a = (lower - mu)/sigma
-        b = (upper - mu)/sigma
-        dist = stats.truncnorm(a=a, b=b, loc=mu, scale=sigma)
-        
-        return dist
-    
     def span_dist(values, probs, rand_range):
         '''
         Creates a distribution broken into weighted self-uniform spans
@@ -109,10 +101,10 @@ def getPD(mu,sigma,weighting,option):
     # Probability distributions for linked diameters and circularities
     # Normal SED (small, regular pores)
     PD.Ncircularity = stats.norm(loc=mu.Ncircularity, scale=sigma.Ncircularity)
-    PD.Ndiameter = trunc_dist(option.mindiameter, np.Inf, mu.Ndiameter, sigma.Ndiameter)
+    PD.Ndiameter = stats.truncnorm(a=((option.mindiameter-mu.Ndiameter)/sigma.Ndiameter) ,b=np.Inf,loc=mu.Ndiameter, scale=sigma.Ndiameter)
     # High SED (larger, irregular pores)
     PD.Hcircularity = stats.norm(loc=mu.Hcircularity, scale=sigma.Hcircularity)
-    PD.Hdiameter = trunc_dist(option.mindiameter, np.Inf, mu.Hdiameter, sigma.Hdiameter)
+    PD.Hdiameter = stats.truncnorm(a=((option.mindiameter-mu.Hdiameter)/sigma.Hdiameter), b=np.Inf,loc=mu.Hdiameter, scale=sigma.Hdiameter)
     # SED distribution
     PD.SED = stats.norm(loc=mu.SED, scale=sigma.SED)
 
@@ -126,9 +118,9 @@ def getPD(mu,sigma,weighting,option):
 
     # Probability distributions for number/ length of pores
     # Minimum porosity clipped at 0.01
-    PD.porosity = trunc_dist(mu.porosity, sigma.porosity, 0.01, np.Inf)
+    PD.porosity = stats.truncnorm(a=((0.01-mu.porosity)/sigma.porosity) ,b=np.Inf,loc=mu.porosity, scale=sigma.porosity)
     # Maximum clipped at maxosteonlength
-    PD.osteonlength = trunc_dist(mu.osteonlength, sigma.osteonlength, 0, option.maxosteonlength)
+    PD.osteonlength = stats.truncnorm(a=(-mu.osteonlength/sigma.osteonlength) ,b=((option.maxosteonlength-mu.osteonlength)/sigma.osteonlength),loc=mu.osteonlength, scale=sigma.osteonlength)
 
     # Probability distributions for azimuthal angle
     PD.phi = span_dist(weighting.phi_values, weighting.phi_probs, [0, 0.5*np.pi])
