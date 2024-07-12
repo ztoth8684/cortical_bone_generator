@@ -63,19 +63,17 @@ class XYprimer:
             'square' : 2,
             2 : 2}
 
+        self.Circle = self.Locations[option.LocationType] == 1
+        self.Square = self.Locations[option.LocationType] == 2
+
         if option.LocationType not in self.Locations:
             pass
         
-        elif self.Locations[option.LocationType] == 1:
-            self.it = 1
-            self.iu = 1
+        elif (self.Circle or self.Square):
+            self.it = 1 + option.ignoreborder*self.Square
+            self.iu = 1 + option.ignoreborder*self.Square
+            self.SpaceList = np.linspace(0, option.ArraySize, int(option.ArraySize/option.Spacing))
             self.AngleList = np.linspace(0, 2*np.pi, self.it*int(np.sqrt(option.ArraySize/option.Spacing)))
-            self.SpaceList = np.linspace(0, option.ArraySize, int(option.ArraySize/option.Spacing))
-            
-        elif self.Locations[option.LocationType] == 2:
-            self.it = 1+option.ignoreborder
-            self.iu = 1+option.ignoreborder
-            self.SpaceList = np.linspace(0, option.ArraySize, int(option.ArraySize/option.Spacing))
         
         self.ignore_target_porosity = 0
         self.grid_complete = 0
