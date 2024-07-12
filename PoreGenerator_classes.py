@@ -63,13 +63,12 @@ class XYprimer:
             'square' : 2,
             2 : 2}
 
-        self.Circle = self.Locations[option.LocationType] == 1
-        self.Square = self.Locations[option.LocationType] == 2
-
         if option.LocationType not in self.Locations:
             pass
         
-        elif (self.Circle or self.Square):
+        elif self.Locations[option.LocationType] in {1, 2}:
+            self.Square = self.Locations[option.LocationType] == 2
+            
             self.it = 1 + option.ignoreborder*self.Square
             self.iu = 1 + option.ignoreborder*self.Square
             self.SpaceList = np.linspace(0, option.ArraySize, int(option.ArraySize/option.Spacing))
