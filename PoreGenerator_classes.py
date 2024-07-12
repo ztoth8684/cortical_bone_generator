@@ -69,7 +69,7 @@ class XYprimer:
         elif self.Locations[option.LocationType] == 1:
             self.it = 1
             self.iu = 1
-            self.AngleList = np.linspace(0, 2*np.pi, XYprimer.it*int(np.sqrt(option.ArraySize/option.Spacing)))
+            self.AngleList = np.linspace(0, 2*np.pi, self.it*int(np.sqrt(option.ArraySize/option.Spacing)))
             self.SpaceList = np.linspace(0, option.ArraySize, int(option.ArraySize/option.Spacing))
             
         elif self.Locations[option.LocationType] == 2:
