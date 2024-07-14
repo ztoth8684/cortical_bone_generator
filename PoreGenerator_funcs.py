@@ -269,18 +269,18 @@ def poreBlast(Bone):
     adjacency = [(i,j,k) for i in (-1,0,1) for j in (-1,0,1) for k in (-1,0,1) if not (i == j == k == 0)] #the adjacency matrix
 
     BoneMerger = np.zeros(Bone.shape, dtype=object)
-    BoneOrig = Bone
+    BoneCopy = np.ndarray.copy(Bone)
 
-    for ia in range(1,Bone.shape[0]-1):
-        for ib in range(1,Bone.shape[1]-1):
-            for ic in range(1,Bone.shape[2]-1):
-                if BoneOrig[ia,ib,ic] == 0:
-                    BoneMerger[ia,ib,ic] = [BoneOrig[ia+dx, ib+dy, ic+dz] for dx, dy, dz in adjacency]
+    for ia in range(1, Bone.shape[0]-1):
+        for ib in range(1, Bone.shape[1]-1):
+            for ic in range(1, Bone.shape[2]-1):
+                if Bone[ia,ib,ic] == 0:
+                    BoneMerger[ia,ib,ic] = [Bone[ia+dx, ib+dy, ic+dz] for dx, dy, dz in adjacency]
                     BoneMerger[ia,ib,ic] = sum(list(map(int,BoneMerger[ia,ib,ic])))
                 if BoneMerger[ia,ib,ic] >= 15 and random.randint(0,1) == 0:
-                    Bone[ia,ib,ic] = 1
+                    BoneCopy[ia,ib,ic] = 1
 
-    return Bone
+    return BoneCopy
 #%%
 
 def poreClast(Bone):
@@ -289,18 +289,18 @@ def poreClast(Bone):
     adjacency = [(i,j,k) for i in (-1,0,1) for j in (-1,0,1) for k in (-1,0,1) if not (i == j == k == 0)] #the adjacency matrix
 
     BoneMerger = np.zeros(Bone.shape, dtype=object)
-    BoneOrig = Bone
+    BoneCopy = np.ndarray.copy(Bone)
     
-    for ia in range(1,Bone.shape[0]-1):
-        for ib in range(1,Bone.shape[1]-1):
-            for ic in range(1,Bone.shape[2]-1):
-                if BoneOrig[ia,ib,ic] == 1:
-                    BoneMerger[ia,ib,ic] = [BoneOrig[ia+dx, ib+dy, ic+dz] for dx, dy, dz in adjacency]
+    for ia in range(1, Bone.shape[0]-1):
+        for ib in range(1, Bone.shape[1]-1):
+            for ic in range(1, Bone.shape[2]-1):
+                if Bone[ia,ib,ic] == 1:
+                    BoneMerger[ia,ib,ic] = [Bone[ia+dx, ib+dy, ic+dz] for dx, dy, dz in adjacency]
                     BoneMerger[ia,ib,ic] = sum(list(map(int,BoneMerger[ia,ib,ic])))
                 if BoneMerger[ia,ib,ic] <= 12:
-                    Bone[ia,ib,ic] = 0
+                    BoneCopy[ia,ib,ic] = 0
 
-    return Bone              
+    return BoneCopy          
 #%%
 
 def getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey, fname):
