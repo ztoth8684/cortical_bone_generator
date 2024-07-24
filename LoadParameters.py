@@ -5,6 +5,7 @@ Created on Tue Jun 18 12:16:52 2024
 
 @author: ztoth
 """
+import numpy as np
 from numpy import pi
 class Struct:
     pass
@@ -42,7 +43,6 @@ def LoadParameters(param_file = None):
         # If LocationType is not random, distance between grid lines
         option.Spacing = 16  # 16
         # If LocationType is not random, variation of pores from grid lines
-        # values 0-5 ignore target_porosity
         option.location_err = 6  # 6
         # If LocationType is not random, stops generation after grid is complete
         # Can cause problems if False while location_err is low

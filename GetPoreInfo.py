@@ -26,8 +26,9 @@ def importBone(fpath, fname):
     # if TIFF file is RGB, flattens to B/W
     if rawBone.ndim == 4:
         Bone_bool = np.squeeze(np.delete(rawBone, (1,2), 3))
+        Bone_bool = Bone_bool.astype(bool)
     elif rawBone.ndim == 3:
-        Bone_bool = rawBone
+        Bone_bool = rawBone.astype(bool)
     # if image has [1] for matrix and [0] for pore, switches it
     if np.mean(Bone_bool) > 0.5:
         Bone = np.float32(~Bone_bool)
