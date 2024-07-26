@@ -27,7 +27,7 @@ class Struct:
 # %% Initialization
 
 option, target_porosity, export, mu, sigma, weighting, params = LoadParameters()
-
+option, mu, sigma = PGf.normalizeParameters(option, mu, sigma)
 # set file name
 [fpath, fname] = PGf.nameFig(option)
 

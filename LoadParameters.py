@@ -28,51 +28,51 @@ def LoadParameters(param_file = None):
         # Set to False to use random seed.
         # Set to True to keep the same seed used last generation. 
         # Any other value will be used as a seed.
-        option.rng_method = True
+        option.rng_method = False
         # 'Timestamp' or name to be used
-        option.namestyle = 'Jagged10.tif' # 'Timestamp'
+        option.namestyle = 'rvc1d8_sp16x.tif' # 'Timestamp'
 
         # True if variation in diameter and circularity should be linked
         # eg, large pored would tend to also be oblong
         option.varLink = True
-        # Minimum pore diameter permissible
+        # Minimum pore diameter permissible (µm)
         option.mindiameter = 0
 
         # 'Circle' (or 1) for circular grid, 'Square' (or 2) for square grid, else random
-        option.LocationType = 0
-        # If LocationType is not random, distance between grid lines
-        option.Spacing = 16  # 16
-        # If LocationType is not random, variation of pores from grid lines
-        option.location_err = 6  # 6
+        option.LocationType = 1
+        # If LocationType is not random, distance between grid lines (µm)
+        option.Spacing = 160  # 160
+        # If LocationType is not random, variation of pores from grid lines (µm)
+        option.location_err = 0  # 0
         # If LocationType is not random, stops generation after grid is complete
         # Can cause problems if False while location_err is low
-        option.ignore_target_porosity = False
+        option.ignore_target_porosity = True
         # If LocationType is square grid, whether to generate pores along the edge.
         option.ignoreborder = False
         
-        # List of diameters to randomly choose from
+        # List of diameters to randomly choose from (µm)
         # ignored if left empty
         # Linear chooses from list randomly
         # Weighted chooses from list according to distribution
-        option.LinearDiscreteDiameters = []
+        option.LinearDiscreteDiameters = [80]
         option.WeightedDiscreteDiameters = []
         # List of circularities (values 0-1) to randomly choose from
         # ignored if left empty
         # Linear chooses from list randomly
         # Weighted chooses from list according to distribution
-        option.LinearDiscreteCircularities = []
+        option.LinearDiscreteCircularities = [1]
         option.WeightedDiscreteCircularities = []
         
         # True if nearby pores should be smoothed and merged
         option.smoothPores = False
         
         # True if pores should have varying shape (cylinder,cone,ellipsoid,hyperboloid)
-        option.variedPoreShape = True
+        option.variedPoreShape = False
         
-        # 10 micrometers/voxel
-        option.ArraySize = 200  # 200
+        # Array size (µm): 10 micrometers/voxel
+        option.ArraySize = 2000  # 2000
         # 'Exp' to choose value from experimental distribution
-        target_porosity = 0.10  # 'Exp'
+        target_porosity = 'Exp'  # 'Exp'
         
         # readjusts target_porosity to account for loss when smoothPores is used
         option.TP_CORRECTION_FACTOR = 1
@@ -95,29 +95,33 @@ def LoadParameters(param_file = None):
         option.SED_limit = 17  # 17
         
         # Parameters for Normal SED
-        mu.Ndiameter = 7  # 4.8
-        sigma.Ndiameter = 0.4  # 0.4
+        # diameter (µm)
+        mu.Ndiameter = 70  # 48
+        sigma.Ndiameter = 4  # 4
+        # circularity
         mu.Ncircularity = 0.66  # 0.66
         sigma.Ncircularity = 0.03  # 0.03
         
         # Parameters for High SED
-        mu.Hdiameter = 18  # 15.7
-        sigma.Hdiameter = 3.75  # 3.75
+        # diameter (µm)
+        mu.Hdiameter = 180  # 157
+        sigma.Hdiameter = 37.5  # 37.5
+        # circularity
         mu.Hcircularity = 0.42  # 0.42
         sigma.Hcircularity = 0.045  # 0.045
         
-        # Parameters for Canal Length
-        mu.osteonlength = 100  # 100
-        sigma.osteonlength = 37.5  # 37.5
-        option.maxosteonlength = 220/3  # 220/3
+        # Parameters for Canal Length (µm)
+        mu.osteonlength = 4000  # 1000
+        sigma.osteonlength = 0.1  # 375
+        option.maxosteonlength = np.Inf # 2200/3
         
         # Parameters for Porosity
         mu.porosity = 0.075046512  # 0.075046512
         sigma.porosity = 0.036744908  # 0.036744908
         
         # Parameters for phi value selection DOI: 10.1016/8756-3282(94)90288-7
-        weighting.phi_values = [0, pi/12, pi/2]  # [0,pi/12,pi/2]
-        weighting.phi_probs = [0.5, 0.5]  # [0.5, 0.5]
+        weighting.phi_values = [0]  # [0,pi/12,pi/2]
+        weighting.phi_probs = [1]  # [0.5, 0.5]
         
         # Parameters for theta value selection
         weighting.theta_values = [0, 2*pi]  # [0,2*pi]
@@ -130,7 +134,7 @@ def LoadParameters(param_file = None):
         params.pores_before_networking = 75  # 75
         params.top_branches = [0,2] # [0,2]
         params.bottom_branches = [0,2] # [0,2]
-        params.sealed_osteon_chance = 0.068  # 0.068 # DOI: 10.1002/ar.21309
+        params.sealed_osteon_chance = 1  # 0.068 # DOI: 10.1002/ar.21309
         params.transverse_flag_onset = pi/4  # pi/4
 
     else:

@@ -21,6 +21,33 @@ class Struct:
 
 #%%
 
+def normalizeParameters(option, mu, sigma):
+    '''Converts inputs from µm to pixel units'''
+    
+    option.mindiameter /= 10
+
+    option.Spacing /= 10
+
+    option.location_err /= 10
+
+    option.LinearDiscreteDiameters = list(np.array(option.LinearDiscreteDiameters)/10)
+    option.WeightedDiscreteDiameters = list(np.array(option.WeightedDiscreteDiameters)/10)
+
+    option.ArraySize /= 10
+
+    mu.Ndiameter /= 10
+    sigma.Ndiameter /= 10
+
+    mu.Hdiameter /= 10
+    sigma.Hdiameter /= 10
+
+    mu.osteonlength /= 10
+    sigma.osteonlength /= 10
+    option.maxosteonlength /= 10
+   
+    return option, mu, sigma
+#%%
+
 def nameFig(option):
     '''sets name for the file generated'''
     
