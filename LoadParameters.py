@@ -73,6 +73,9 @@ def LoadParameters(param_file = None):
         option.ArraySize = 200  # 200
         # 'Exp' to choose value from experimental distribution
         target_porosity = 0.10  # 'Exp'
+        
+        # readjusts target_porosity to account for loss when smoothPores is used
+        option.TP_CORRECTION_FACTOR = 1
 
         # Files to Export: Excel, Text, TIFF Stack, STL
         export.xcls = True

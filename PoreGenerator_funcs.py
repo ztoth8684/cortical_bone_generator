@@ -322,6 +322,7 @@ def getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey,
     'option.ArraySize' ,
     'option.maxosteonlength' ,
     'option.SED_limit',
+    'option.TP_CORRECTION_FACTOR'
     'mu.SED' ,
     'mu.Ndiameter' ,
     'mu.Ncircularity' ,

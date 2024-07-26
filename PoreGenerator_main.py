@@ -47,9 +47,8 @@ if target_porosity in {'Exp', 'EXP'}:
     target_porosity = PD.porosity.rvs(1)[0]
 
 # readjusts target_porosity to account for loss when smoothPores is used
-TP_CORRECTION_FACTOR = 1
 if option.smoothPores is True:
-    target_porosity = target_porosity/TP_CORRECTION_FACTOR
+    target_porosity = target_porosity/option.TP_CORRECTION_FACTOR
 
 # creates log for use in pore networking
 valueslog = np.zeros([12, int(round(7_000_000*target_porosity/mu.osteonlength, ndigits=-3))])
