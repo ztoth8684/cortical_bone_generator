@@ -33,7 +33,7 @@ def normalizeParameters(option, mu, sigma):
     option.LinearDiscreteDiameters = list(np.array(option.LinearDiscreteDiameters)/10)
     option.WeightedDiscreteDiameters = list(np.array(option.WeightedDiscreteDiameters)/10)
 
-    option.ArraySize /= 10
+    option.ArraySize = int(option.ArraySize/10)
 
     mu.Ndiameter /= 10
     sigma.Ndiameter /= 10
@@ -44,6 +44,32 @@ def normalizeParameters(option, mu, sigma):
     mu.osteonlength /= 10
     sigma.osteonlength /= 10
     option.maxosteonlength /= 10
+   
+    return option, mu, sigma
+
+def revertParameters(option, mu, sigma):
+    '''Converts inputs back from pixel to µm units'''
+    
+    option.mindiameter *= 10
+
+    option.Spacing *= 10
+
+    option.location_err *= 10
+
+    option.LinearDiscreteDiameters = list(np.array(option.LinearDiscreteDiameters)*10)
+    option.WeightedDiscreteDiameters = list(np.array(option.WeightedDiscreteDiameters)*10)
+
+    option.ArraySize = int(option.ArraySize*10)
+
+    mu.Ndiameter *= 10
+    sigma.Ndiameter *= 10
+
+    mu.Hdiameter *= 10
+    sigma.Hdiameter *= 10
+
+    mu.osteonlength *= 10
+    sigma.osteonlength *= 10
+    option.maxosteonlength *= 10
    
     return option, mu, sigma
 #%%
@@ -330,7 +356,7 @@ def poreClast(Bone):
     return BoneCopy          
 #%%
 
-def getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey, fname):
+def getTextOutput(option, mu, sigma, weighting, params, target_porosity, porosity, RNGkey, fname):
     
     varlist = [
     'option.varLink' ,
@@ -349,19 +375,22 @@ def getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey,
     'option.ArraySize' ,
     'option.maxosteonlength' ,
     'option.SED_limit',
-    'option.TP_CORRECTION_FACTOR'
+    'option.TP_CORRECTION_FACTOR',
+    'option.experimental_porosity',
     'mu.SED' ,
     'mu.Ndiameter' ,
     'mu.Ncircularity' ,
     'mu.Hdiameter' ,
     'mu.Hcircularity' ,
     'mu.osteonlength' ,
+    'mu.porosity',
     'sigma.SED' ,
     'sigma.Ndiameter' ,
     'sigma.Ncircularity' ,
     'sigma.Hdiameter' ,
     'sigma.Hcircularity' ,
     'sigma.osteonlength' ,
+    'sigma.porosity',
     'weighting.phi_values' ,
     'weighting.phi_probs' ,
     'weighting.theta_values' ,
@@ -374,11 +403,12 @@ def getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey,
     'params.transverse_flag_onset' ,
     'params.shape_proportions' ,
     'RNGkey' ,
+    'porosity'
     ]
     
     fullcell = list()
     for n in range(0, len(varlist)):
-        fullcell.append('The value of '+varlist[n]+' is <<'+str(eval(varlist[n]))+'>>'+'\n')
+        fullcell.append(varlist[n]+' is <<'+str(eval(varlist[n]))+'>>'+'\n')
     
     sheetprep = list()
     sheetprep.append('Filename')

@@ -43,7 +43,7 @@ PD = PGf.getPD(mu, sigma, weighting, option)
 # PD = PGc.probability_dist(mu, sigma, weighting, option)
 
 # Chooses target_porosity Value from experimental distribution
-if target_porosity in {'Exp', 'EXP'}:
+if option.experimental_porosity is True:
     target_porosity = PD.porosity.rvs(1)[0]
 
 # readjusts target_porosity to account for loss when smoothPores is used
@@ -60,75 +60,75 @@ XYprimer = PGc.XYprimer(option)
 
 
 # %% Main Body
-
-while ((1-np.mean(Bone) < target_porosity) and (XYprimer.ignore_target_porosity == 0)) or (XYprimer.grid_complete == 0):
-
-    [R, C] = PGf.getRC(option, PD)
-    z = random.random() * option.ArraySize
-    # theta is angle of trajectory, phi is angle of depression
-    theta = PD.theta.rvs(1)
-    phi = PD.phi.rvs(1)
+if export.tiff or export.stl:
+    while ((1-np.mean(Bone) < target_porosity) and (XYprimer.ignore_target_porosity == 0)) or (XYprimer.grid_complete == 0):
     
-    # prevent divide-by-zero errors for horizontal pores
-    if phi == np.pi/2:
-        phi = np.pi/2 - 0.1
-
-    # Correction factor (phi is also correcting things in eqn)
-    C = C/cos(phi)
-    # cuts off cylinder
-    minz = z - cos(phi)*0.5*PD.osteonlength.rvs(1)[0]
-    maxz = z + cos(phi)*0.5*PD.osteonlength.rvs(1)[0]
-
-    if sum(valueslog[10,:]) > params.pores_before_networking and random.random() > params.sealed_osteon_chance:
-        [x,y,minz,z,maxz,valueslog,iteration] = PGf.networkPore(valueslog,minz,z,maxz,iteration)
-    else:
-        [x, y, XYprimer] = PGf.getXY(option, XYprimer)
-
-    if phi > params.transverse_flag_onset:
-        miny = y - sin(phi) * PD.osteonlength.rvs(1)[0] * 0.25
-        maxy = y + sin(phi) * PD.osteonlength.rvs(1)[0] * 0.25
-        minx = x - sin(phi) * PD.osteonlength.rvs(1)[0] * 0.25
-        maxx = x + sin(phi) * PD.osteonlength.rvs(1)[0] * 0.25
-    else:
-        miny = 0
-        minx = 0
-        maxy = option.ArraySize
-        maxx = option.ArraySize
-
-    if option.variedPoreShape == 1:
-        shapechoice = random.random()
-        if shapechoice < params.shape_proportions[0]:
-            shape = 1                                          # Cylinder
-        elif shapechoice < sum(params.shape_proportions[0:2]):
-            shape = 3*(5+abs(minz-ik))/245                    # Proximal Cone
-        elif shapechoice < sum(params.shape_proportions[0:3]):
-            shape = 3*(5+abs(maxz-ik))/245                    # Distal Cone
-        elif shapechoice < sum(params.shape_proportions[0:4]):
-            shape = 3*(5+np.minimum(abs(maxz-ik), abs(minz-ik)))/130  # Ellipsoid
-        elif shapechoice <= 1:
-            shape = 3*(5+abs(z-ik))/130                       # Hyperboloid
-    else:
-        shapechoice = 0
-        shape = 1
-
-
-    Bone = np.multiply(Bone, np.reshape(np.transpose(\
-        ((cos(theta)**2 + sin(theta)**2 / C**2)*(ii-x+ (ik-z)*tan(phi)*sin(theta))**2 \
-        + (2*sin(theta)*cos(theta)*(1- (1/ C**2))*(ii-x+ (ik-z)*tan(phi)*sin(theta)))*(ij-y- (ik-z)*tan(phi)*cos(theta)) \
-        + (sin(theta)**2 + cos(theta)**2 / C**2)*(ij-y- (ik-z)*tan(phi)*cos(theta))**2 \
-        > R**2 * shape * ((ii>minx) & (ii<maxx)) * ((ij>miny) & (ij<maxy)) * ((ik>minz) & (ik<maxz)) ) \
-        ), Bone.shape, order = 'F'))
-
-    A = random.randint(params.bottom_branches[0], params.bottom_branches[1])
-    B = random.randint(params.top_branches[0], params.top_branches[1])
-
-    if A+B != 0:
-        valueslog[:,iteration] = [np.squeeze(i) for i in [R,C,theta,phi,x,y,minz,z,maxz,1,A,B]]
-        iteration += 1
-
-    # For Debugging Purposes Only
-    # Uncomment following line to only generate one pore
-    # XYprimer.grid_complete = 1; XYprimer.ignore_target_porosity = 1;
+        [R, C] = PGf.getRC(option, PD)
+        z = random.random() * option.ArraySize
+        # theta is angle of trajectory, phi is angle of depression
+        theta = PD.theta.rvs(1)
+        phi = PD.phi.rvs(1)
+        
+        # prevent divide-by-zero errors for horizontal pores
+        if phi == np.pi/2:
+            phi = np.pi/2 - 0.1
+    
+        # Correction factor (phi is also correcting things in eqn)
+        C = C/cos(phi)
+        # cuts off cylinder
+        minz = z - cos(phi)*0.5*PD.osteonlength.rvs(1)[0]
+        maxz = z + cos(phi)*0.5*PD.osteonlength.rvs(1)[0]
+    
+        if sum(valueslog[10,:]) > params.pores_before_networking and random.random() > params.sealed_osteon_chance:
+            [x,y,minz,z,maxz,valueslog,iteration] = PGf.networkPore(valueslog,minz,z,maxz,iteration)
+        else:
+            [x, y, XYprimer] = PGf.getXY(option, XYprimer)
+    
+        if phi > params.transverse_flag_onset:
+            miny = y - sin(phi) * PD.osteonlength.rvs(1)[0] * 0.25
+            maxy = y + sin(phi) * PD.osteonlength.rvs(1)[0] * 0.25
+            minx = x - sin(phi) * PD.osteonlength.rvs(1)[0] * 0.25
+            maxx = x + sin(phi) * PD.osteonlength.rvs(1)[0] * 0.25
+        else:
+            miny = 0
+            minx = 0
+            maxy = option.ArraySize
+            maxx = option.ArraySize
+    
+        if option.variedPoreShape == 1:
+            shapechoice = random.random()
+            if shapechoice < params.shape_proportions[0]:
+                shape = 1                                          # Cylinder
+            elif shapechoice < sum(params.shape_proportions[0:2]):
+                shape = 3*(5+abs(minz-ik))/245                    # Proximal Cone
+            elif shapechoice < sum(params.shape_proportions[0:3]):
+                shape = 3*(5+abs(maxz-ik))/245                    # Distal Cone
+            elif shapechoice < sum(params.shape_proportions[0:4]):
+                shape = 3*(5+np.minimum(abs(maxz-ik), abs(minz-ik)))/130  # Ellipsoid
+            elif shapechoice <= 1:
+                shape = 3*(5+abs(z-ik))/130                       # Hyperboloid
+        else:
+            shapechoice = 0
+            shape = 1
+    
+    
+        Bone = np.multiply(Bone, np.reshape(np.transpose(\
+            ((cos(theta)**2 + sin(theta)**2 / C**2)*(ii-x+ (ik-z)*tan(phi)*sin(theta))**2 \
+            + (2*sin(theta)*cos(theta)*(1- (1/ C**2))*(ii-x+ (ik-z)*tan(phi)*sin(theta)))*(ij-y- (ik-z)*tan(phi)*cos(theta)) \
+            + (sin(theta)**2 + cos(theta)**2 / C**2)*(ij-y- (ik-z)*tan(phi)*cos(theta))**2 \
+            > R**2 * shape * ((ii>minx) & (ii<maxx)) * ((ij>miny) & (ij<maxy)) * ((ik>minz) & (ik<maxz)) ) \
+            ), Bone.shape, order = 'F'))
+    
+        A = random.randint(params.bottom_branches[0], params.bottom_branches[1])
+        B = random.randint(params.top_branches[0], params.top_branches[1])
+    
+        if A+B != 0:
+            valueslog[:,iteration] = [np.squeeze(i) for i in [R,C,theta,phi,x,y,minz,z,maxz,1,A,B]]
+            iteration += 1
+    
+        # For Debugging Purposes Only
+        # Uncomment following line to only generate one pore
+        # XYprimer.grid_complete = 1; XYprimer.ignore_target_porosity = 1;
 
 if option.smoothPores == 1:
     for n in range(10):
@@ -138,16 +138,20 @@ if option.smoothPores == 1:
             Bone = PGf.poreClast(Bone)
 
     # reverts target_porosity for bookkeeping
-    target_porosity = target_porosity*TP_CORRECTION_FACTOR
+    target_porosity = target_porosity*option.TP_CORRECTION_FACTOR
 
 Bone = ~(Bone.astype(bool))
+porosity = np.mean(Bone)
+
+option, mu, sigma = PGf.revertParameters(option, mu, sigma)
+
 
 # %% Save Results
 
 if os.path.isdir(fpath) is False:
     os.makedirs(fpath)
 
-fullcell, sheetprep, sheetcell = PGf.getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey, fname)
+fullcell, sheetprep, sheetcell = PGf.getTextOutput(option, mu, sigma, weighting, params, target_porosity, porosity, RNGkey, fname)
 if export.xcls is True:
     spreadsheet_name = 'Metadata.xlsx'
     if os.path.isfile(fpath+spreadsheet_name) is False:
