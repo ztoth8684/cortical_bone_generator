@@ -10,6 +10,7 @@ import sys
 import datetime
 import pickle
 import numpy as np
+import scipy
 import scipy.stats as stats
 import random
 import meshlib.mrmeshpy as mr
@@ -46,6 +47,8 @@ def normalizeParameters(option, mu, sigma):
     option.maxosteonlength /= 10
    
     return option, mu, sigma
+
+#%%
 
 def revertParameters(option, mu, sigma):
     '''Converts inputs back from pixel to µm units'''
@@ -319,41 +322,40 @@ def getXY(option, XYprimer):
 def poreBlast(Bone):
     '''deposits bone matrix -> decrease porosity (more 1's)'''
         
-    adjacency = [(i,j,k) for i in (-1,0,1) for j in (-1,0,1) for k in (-1,0,1) if not (i == j == k == 0)] #the adjacency matrix
+    threshold = 15
+    
+    b = 1/threshold
+    kernel = np.ones((3,3,3))*b
+    kernel[1,1,1] = 1
+    
+    conv = scipy.ndimage.convolve(Bone, kernel)
+    rounded = np.floor(conv)
+    
+    rand = np.random.randint(0, 2, Bone.shape)
+    salted = np.multiply(rand,rounded).astype(dtype=np.float32)
+    mixed = Bone + salted    
+    
+    flattened = mixed.astype(bool).astype(dtype=np.float32)
+    
+    return flattened
 
-    BoneMerger = np.zeros(Bone.shape, dtype=object)
-    BoneCopy = np.ndarray.copy(Bone)
-
-    for ia in range(1, Bone.shape[0]-1):
-        for ib in range(1, Bone.shape[1]-1):
-            for ic in range(1, Bone.shape[2]-1):
-                if Bone[ia,ib,ic] == 0:
-                    BoneMerger[ia,ib,ic] = [Bone[ia+dx, ib+dy, ic+dz] for dx, dy, dz in adjacency]
-                    BoneMerger[ia,ib,ic] = sum(list(map(int,BoneMerger[ia,ib,ic])))
-                if BoneMerger[ia,ib,ic] >= 15 and random.randint(0,1) == 0:
-                    BoneCopy[ia,ib,ic] = 1
-
-    return BoneCopy
 #%%
 
 def poreClast(Bone):
     '''removes bone matrix -> increase porosity (more 0's)'''
     
-    adjacency = [(i,j,k) for i in (-1,0,1) for j in (-1,0,1) for k in (-1,0,1) if not (i == j == k == 0)] #the adjacency matrix
-
-    BoneMerger = np.zeros(Bone.shape, dtype=object)
-    BoneCopy = np.ndarray.copy(Bone)
+    threshold = 12
     
-    for ia in range(1, Bone.shape[0]-1):
-        for ib in range(1, Bone.shape[1]-1):
-            for ic in range(1, Bone.shape[2]-1):
-                if Bone[ia,ib,ic] == 1:
-                    BoneMerger[ia,ib,ic] = [Bone[ia+dx, ib+dy, ic+dz] for dx, dy, dz in adjacency]
-                    BoneMerger[ia,ib,ic] = sum(list(map(int,BoneMerger[ia,ib,ic])))
-                if BoneMerger[ia,ib,ic] <= 12:
-                    BoneCopy[ia,ib,ic] = 0
+    b = 1/(3**3)  # borders
+    m = 1 - b*(threshold+1)  # middle
+    kernel = np.ones((3,3,3))*b
+    kernel[1,1,1] = m
+    
+    conv = scipy.ndimage.convolve(Bone, kernel, mode='constant', cval=0)
+    rounded = np.floor(conv)
+    
+    return rounded
 
-    return BoneCopy          
 #%%
 
 def getTextOutput(option, mu, sigma, weighting, params, target_porosity, porosity, RNGkey, fname):
