@@ -26,6 +26,7 @@
 
 	Usage:
 		Python:
+            >>> from PoreGenerator_main import cortical_bone_generator
             >>> exports = ['tiff', 'txt', 'stl', 'xlsx']
             >>> rng_method = 'some seed value'
 			>>> Bone = cortical_bone_generator(None, 'Timestamp', exports, rng_method)
@@ -55,7 +56,7 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
     option, target_porosity, export, mu, sigma, weighting, params = LoadParameters(param_file, exports)
     option, mu, sigma = PGf.normalizeParameters(option, mu, sigma)
     # set file name
-    [fpath, fname] = PGf.nameFig(option.namestyle)
+    [fpath, fname] = PGf.nameFig(namestyle)
     
     # sets rng based on rng_method
     RNGkey = PGf.setRNG(rng_method)

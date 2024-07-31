@@ -5,7 +5,6 @@ Created on Tue Jun 18 12:16:52 2024
 
 @author: ztoth
 """
-import numpy as np
 import pandas as pd
 from numpy import pi, inf, NaN
 class Struct:
@@ -213,6 +212,9 @@ def choose_exports(exports):
     export.txt = False
     export.tiff = False
     export.stl = False
+    
+    if type(exports) is str:
+        exports = [exports]
     
     lst = []
     for exp in exports: lst.append(dictionary[exp])
