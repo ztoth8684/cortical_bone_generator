@@ -198,4 +198,3 @@ The program uses the following modules:
 - pandas
 - tifffile
 - meshlib (https://github.com/MeshInspector/MeshLib)
-- 
