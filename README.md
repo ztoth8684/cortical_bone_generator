@@ -193,3 +193,9 @@ The porosity at which the image generates, represented as a percent of pixels/vo
 ***
 # Using the Program
 The program was written with Python 3.11
+The program uses the following modules:
+- numpy
+- pandas
+- tifffile
+- meshlib (https://github.com/MeshInspector/MeshLib)
+- 
