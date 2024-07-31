@@ -35,7 +35,6 @@
 """
 
 import os.path
-from winsound import Beep
 import random
 import numpy as np
 import pandas as pd
@@ -48,6 +47,8 @@ import PoreGenerator_classes as PGc
 from LoadParameters import LoadParameters
 
 # %% Initialization
+
+BEEP = False
 
 def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports = ['tiff'], rng_method = False):
 
@@ -228,5 +229,8 @@ if __name__ == "__main__":
     else: param_file = None
 
     cortical_bone_generator(param_file, namestyle, exports, rng_method)
-    Beep(500,500)
+    
+    if BEEP:
+        from winsound import Beep
+        Beep(500,500)
 
