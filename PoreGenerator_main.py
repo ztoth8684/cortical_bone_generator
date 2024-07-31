@@ -31,7 +31,7 @@
 			>>> Bone = cortical_bone_generator(None, 'Timestamp', exports, rng_method)
 
 		Terminal:
-			$  python cortical_bone_generator.py Defaults.txt  'Timestamp'  ['tiff'] 'seed value'
+			$  python PoreGenerator_main.py Defaults.txt  'Timestamp'  ['tiff'] 'seed value'
 """
 
 import os.path
@@ -207,23 +207,26 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
 #%% Run from Terminal ############################################################################
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) > 1: # At least 1 command line parameter
-	    param_file = str(sys.argv[1])
+    if (len(sys.argv) > 1): # At least 1 command line parameter
+        param_file = str(sys.argv[1])
+        
+        if (len(sys.argv) > 2): # At least 2
+            namestyle = int(sys.argv[2])
+            
+            if (len(sys.argv) > 3):
+                exports = int(sys.argv[3])
+                
+                if (len(sys.argv) > 4):
+                    rng_method = int(sys.argv[4])
+                    
+                else: rng_method = False
+                
+            else: exports = ['tiff']
+            
+        else: namestyle = 'Timestamp'
+        
+    else: param_file = None
 
-	    if(len(sys.argv) > 2): # At least 2
-	    	namestyle = int(sys.argv[2])
-	    else:
-	    	namestyle = 'Timestamp'
-
-    cortical_bone_generator(param_file, namestyle)
+    cortical_bone_generator(param_file, namestyle, exports, rng_method)
     Beep(500,500)
-
-# Run in Python
-# image = Image.open("./images/second_pass.png")
-# bool_image = image_to_2d_bool_array(image)
-# output = connected_component_labelling(bool_image, CONNECTIVITY_4)
-# print(output)
-
-
-
 
