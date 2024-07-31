@@ -435,7 +435,7 @@ def make3DModel(fpath, fname, Bone):
     # Mesh elements per voxel side length
     res = 1
     
-    Bone32 = np.float32(~Bone)
+    Bone32 = np.float32(~Bone.astype(bool))
     simpleVolume = mrn.simpleVolumeFrom3Darray(Bone32)
     floatGrid = mr.simpleVolumeToDenseGrid(simpleVolume)
     mesh = mr.gridToMesh(floatGrid, mr.Vector3f(1/res, 1/res, 1/res), 0.5)
