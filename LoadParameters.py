@@ -11,7 +11,7 @@ from numpy import pi, inf, NaN
 class Struct:
     pass
 
-def LoadParameters(param_file = None):
+def LoadParameters(param_file, exports):
     
     option = Struct()
     mu = Struct()
@@ -20,19 +20,15 @@ def LoadParameters(param_file = None):
     params = Struct()
     export = Struct()
     
+    param_file = './param_files/' + param_file
+    
+    export = choose_exports(exports)
+    
     if param_file is None:
         
         '''
         Options
         '''
-        
-        # Set to False to use random seed.
-        # Set to True to keep the same seed used last generation. 
-        # Any other value will be used as a seed.
-        option.rng_method = False
-        # 'Timestamp' or name to be used
-        option.namestyle = 'Defaults.tif' # 'Timestamp'
-
         # True if variation in diameter and circularity should be linked
         # eg, large pored would tend to also be oblong
         option.varLink = True
@@ -79,17 +75,10 @@ def LoadParameters(param_file = None):
         
         # readjusts target_porosity to account for loss when smoothPores is used
         option.TP_CORRECTION_FACTOR = 1
-
-        # Files to Export: Excel, Text, TIFF Stack, STL
-        export.xcls = False
-        export.txt = True
-        export.tiff = False
-        export.stl = False
         
         '''
         Parameters
         '''
-        
         # SED related parameters below from DOI: 10.1002/jbmr.3561
         # Parameters for SED per hole
         # Controls the distribution of pore size/irregularity
@@ -141,6 +130,7 @@ def LoadParameters(param_file = None):
         params.transverse_flag_onset = pi/4  # pi/4
 
     else:
+        
         def clean(string):
             out = string.replace(' is ', '').replace('>>', '').split('<<')
             return out
@@ -149,14 +139,7 @@ def LoadParameters(param_file = None):
         lst = list()
         for n in range(0, len(df[0])): lst.append(df[0].loc[n])
         df = pd.DataFrame(list(map(clean, lst)), columns=['Variable', 'Value'])
-                
-        option.rng_method = False
-        option.namestyle = 'Test.tif'
-        export.xcls = False
-        export.txt = False
-        export.tiff = True
-        export.stl = False
-        
+
         option.varLink = eval(df.iloc[0].Value)
         option.mindiameter = eval(df.iloc[1].Value)
         option.LocationType = eval(df.iloc[2].Value)
@@ -203,3 +186,44 @@ def LoadParameters(param_file = None):
 
     
     return option, target_porosity, export, mu, sigma, weighting, params
+
+def choose_exports(exports):
+    
+    class Struct:
+        pass
+    export = Struct()
+
+    dictionary = {
+        'xlsx' : 1,
+        'XLSX' : 1,
+        'excel' : 1,
+        'spreadsheet' : 1,
+        'txt' : 2,
+        'TXT' : 2,
+        'text' : 2,
+        'tiff' : 3,
+        'tif' : 3,
+        'TIFF' : 3,
+        'TIF' : 3,
+        'stl' : 4,
+        'STL' : 4
+        }
+    
+    export.xlsx = False
+    export.txt = False
+    export.tiff = False
+    export.stl = False
+    
+    lst = []
+    for exp in exports: lst.append(dictionary[exp])
+    
+    if 1 in lst:
+        export.xlsx = True
+    if 2 in lst:
+        export.txt = True
+    if 3 in lst:
+        export.tiff = True
+    if 4 in lst:
+        export.stl = True
+        
+    return export

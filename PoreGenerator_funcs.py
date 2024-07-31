@@ -77,41 +77,41 @@ def revertParameters(option, mu, sigma):
     return option, mu, sigma
 #%%
 
-def nameFig(option):
+def nameFig(namestyle):
     '''sets name for the file generated'''
     
     # File name:
     fpath = './pore_files/'
-    if option.namestyle == 'Timestamp':
+    if namestyle == 'Timestamp':
         clock_ = datetime.datetime.now()
         fname = clock_.strftime("%Y_%m_%d_%H_%M_%S") + '.tif'
     else:
         banlist = ['<','>',':','\"','/','\\','|','?','*']
-        option.namestyle = option.namestyle.translate({ord(i): None for i in banlist})
-        if '.tif' in option.namestyle:
-            fname = option.namestyle
+        namestyle = namestyle.translate({ord(i): None for i in banlist})
+        if namestyle.endswith('.tif'):
+            fname = namestyle
         else:
-            fname = option.namestyle + '.tif'
+            fname = namestyle + '.tif'
             
     return fpath,fname
 #%%
 
-def setRNG(option):
+def setRNG(rng_method):
     '''sets RNG seed value for generation'''
     
-    if option.rng_method == 1:
+    if rng_method == 1:
         if os.path.isfile('./saved_rng.pkl'):
             with open('saved_rng.pkl', 'rb') as f:
                 RNGkey = pickle.load(f)
             random.seed(RNGkey)
-    elif option.rng_method == 0:
+    elif rng_method == 0:
         RNGkey = random.randrange(sys.maxsize)
         random.seed(RNGkey)
         with open('saved_rng.pkl', 'wb') as f:
             pickle.dump(RNGkey, f)
     else:
         rngseed = []
-        for character in option.rng_method:
+        for character in rng_method:
             rngseed.append(ord(character))
         RNGkey = sum(rngseed)
         random.seed(RNGkey)
