@@ -6,7 +6,7 @@ Created on Tue Jun 18 12:16:52 2024
 @author: ztoth
 """
 import pandas as pd
-from numpy import pi, inf, NaN
+from numpy import pi, inf
 class Struct:
     pass
 

@@ -34,7 +34,7 @@ weighting.phi_values is <<[0]>>
 weighting.phi_probs is <<[1]>>
 weighting.theta_values is <<[0, 2*pi]>>
 weighting.theta_probs is <<[1]>>
-target_porosity is <<NaN>>
+target_porosity is <<0>>
 params.pores_before_networking is <<75>>
 params.top_branches is <<[0, 2]>>
 params.bottom_branches is <<[0, 2]>>

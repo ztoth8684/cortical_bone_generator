@@ -193,3 +193,7 @@ The porosity at which the image generates, represented as a percent of pixels/vo
 ***
 # Using the Program
 The program was written with Python 3.11
+meshlib
+pandas
+tifffile
+scipy
