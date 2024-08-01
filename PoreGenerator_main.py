@@ -49,9 +49,10 @@ from LoadParameters import LoadParameters
 
 # %% Initialization
 
-BEEP = False
 
 def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports = ['tiff'], rng_method = False):
+
+    BEEP = False    
 
     option, target_porosity, export, mu, sigma, weighting, params = LoadParameters(param_file, exports)
     option, mu, sigma = PGf.normalizeParameters(option, mu, sigma)
@@ -204,6 +205,10 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
     if export.stl is True:
         PGf.make3DModel(fpath, fname, Bone)
     
+    if BEEP:
+        from winsound import Beep
+        Beep(500,500)
+    
     return Bone
 
 #%% Run from Terminal ############################################################################
@@ -228,7 +233,4 @@ if __name__ == "__main__":
 
     cortical_bone_generator(param_file, namestyle, exports, rng_method)
     
-    if BEEP:
-        from winsound import Beep
-        Beep(500,500)
 
