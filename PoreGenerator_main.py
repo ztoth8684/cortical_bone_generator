@@ -209,16 +209,16 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
 #%% Run from Terminal ############################################################################
 if __name__ == "__main__":
     import sys
-    if (len(sys.argv) > 1): # At least 1 command line parameter
+    if (len(sys.argv) >= 1): # At least 1 command line parameter
         param_file = str(sys.argv[1])
         
-        if (len(sys.argv) > 2): # At least 2
+        if (len(sys.argv) >= 2): # At least 2
             namestyle = int(sys.argv[2])
             
-            if (len(sys.argv) > 3):
+            if (len(sys.argv) >= 3):
                 exports = int(sys.argv[3])
                 
-                if (len(sys.argv) > 4):
+                if (len(sys.argv) >= 4):
                     rng_method = int(sys.argv[4])
                     
                 else: rng_method = False
