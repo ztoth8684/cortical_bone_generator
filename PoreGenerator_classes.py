@@ -113,10 +113,10 @@ class probability_dist:
         # Probability distributions for linked diameters and circularities 
         # Normal SED (small, regular pores)
         self.Ncircularity = stats.norm(loc=mu.Ncircularity, scale=sigma.Ncircularity)
-        self.Ndiameter = self.trunc_dist(option.mindiameter, np.Inf, mu.Ndiameter, sigma.Ndiameter)
+        self.Ndiameter = self.trunc_dist(option.mindiameter, np.inf, mu.Ndiameter, sigma.Ndiameter)
         # High SED (larger, irregular pores)
         self.Hcircularity = stats.norm(loc=mu.Hcircularity, scale=sigma.Hcircularity)
-        self.Hdiameter = self.trunc_dist(option.mindiameter, np.Inf, mu.Hdiameter, sigma.Hdiameter)
+        self.Hdiameter = self.trunc_dist(option.mindiameter, np.inf, mu.Hdiameter, sigma.Hdiameter)
         # SED distribution
         self.SED = stats.norm(loc=mu.SED, scale=sigma.SED)
         
@@ -130,7 +130,7 @@ class probability_dist:
         
         # Probability distributions for number/ length of pores
         # Minimum porosity clipped at 0.01
-        self.porosity = self.trunc_dist(mu.porosity, sigma.porosity, 0.01, np.Inf)
+        self.porosity = self.trunc_dist(mu.porosity, sigma.porosity, 0.01, np.inf)
         # Maximum clipped at maxosteonlength
         self.osteonlength = self.trunc_dist(mu.osteonlength, sigma.osteonlength, 0, option.maxosteonlength)
         

@@ -157,10 +157,10 @@ def getPD(mu,sigma,weighting,option):
     # Probability distributions for linked diameters and circularities
     # Normal SED (small, regular pores)
     PD.Ncircularity = stats.norm(loc=mu.Ncircularity, scale=sigma.Ncircularity)
-    PD.Ndiameter = stats.truncnorm(a=((option.mindiameter-mu.Ndiameter)/sigma.Ndiameter) ,b=np.Inf,loc=mu.Ndiameter, scale=sigma.Ndiameter)
+    PD.Ndiameter = stats.truncnorm(a=((option.mindiameter-mu.Ndiameter)/sigma.Ndiameter) ,b=np.inf,loc=mu.Ndiameter, scale=sigma.Ndiameter)
     # High SED (larger, irregular pores)
     PD.Hcircularity = stats.norm(loc=mu.Hcircularity, scale=sigma.Hcircularity)
-    PD.Hdiameter = stats.truncnorm(a=((option.mindiameter-mu.Hdiameter)/sigma.Hdiameter), b=np.Inf,loc=mu.Hdiameter, scale=sigma.Hdiameter)
+    PD.Hdiameter = stats.truncnorm(a=((option.mindiameter-mu.Hdiameter)/sigma.Hdiameter), b=np.inf,loc=mu.Hdiameter, scale=sigma.Hdiameter)
     # SED distribution
     PD.SED = stats.norm(loc=mu.SED, scale=sigma.SED)
 
@@ -174,7 +174,7 @@ def getPD(mu,sigma,weighting,option):
 
     # Probability distributions for number/ length of pores
     # Minimum porosity clipped at 0.01
-    PD.porosity = stats.truncnorm(a=((0.01-mu.porosity)/sigma.porosity) ,b=np.Inf,loc=mu.porosity, scale=sigma.porosity)
+    PD.porosity = stats.truncnorm(a=((0.01-mu.porosity)/sigma.porosity) ,b=np.inf,loc=mu.porosity, scale=sigma.porosity)
     # Maximum clipped at maxosteonlength
     PD.osteonlength = stats.truncnorm(a=(-mu.osteonlength/sigma.osteonlength) ,b=((option.maxosteonlength-mu.osteonlength)/sigma.osteonlength),loc=mu.osteonlength, scale=sigma.osteonlength)
 
