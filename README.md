@@ -192,8 +192,8 @@ The maximum phi value, after which a pores length in the x and y directions is l
 The porosity at which the image generates, represented as a percent of pixels/voxels with a value of 0 (porous in the image).
 ***
 # Using the Program
-The program was written with Python 3.11. The program uses the following modules:
-pandas
-scipy
-meshlib
-tifffile
+The program was written with Python 3.11. The program uses the following modules and all dependencies thereof:
+- pandas
+- scipy
+- meshlib
+- tifffile
