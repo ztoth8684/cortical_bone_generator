@@ -17,10 +17,8 @@ def LoadParameters(param_file, exports):
     sigma = Struct()
     weighting = Struct()
     params = Struct()
-    export = Struct()
-    
-    param_file = './param_files/' + param_file
-    
+
+        
     export = choose_exports(exports)
     
     if param_file is None:
@@ -133,6 +131,8 @@ def LoadParameters(param_file, exports):
         def clean(string):
             out = string.replace(' is ', '').replace('>>', '').split('<<')
             return out
+
+        param_file = './param_files/' + param_file
 
         df = pd.read_table(param_file, header=None, dtype='string')
         lst = list()
