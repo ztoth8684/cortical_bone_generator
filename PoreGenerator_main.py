@@ -106,7 +106,7 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
             minz = z - cos(phi)*0.5*PD.osteonlength.rvs(1)[0]
             maxz = z + cos(phi)*0.5*PD.osteonlength.rvs(1)[0]
         
-            if sum(valueslog[10,:]) > params.pores_before_networking and random.random() > params.sealed_osteon_chance:
+            if sum(valueslog[9,:]) > params.pores_before_networking and random.random() > params.sealed_osteon_chance:
                 [x,y,minz,z,maxz,valueslog,iteration] = PGf.networkPore(valueslog,minz,z,maxz,iteration)
             else:
                 [x, y, XYprimer] = PGf.getXY(option, XYprimer)

@@ -230,7 +230,9 @@ def networkPore(valueslog, minz, z, maxz, iteration):
     maxz = maxz - z
     minz = minz - z
     # picks a random pore
-    select = random.randint(0,sum(valueslog[9,:])-1)
+    numpores = sum(valueslog[9,:])
+    numpores = numpores.astype(int)
+    select = random.randint(0,numpores-1)
     # pool of 'spaces' on top and bottom of pore
     Mpool = [0]*int(valueslog[10,select]) + [1]*int(valueslog[11,select])
     # picks from the pool
