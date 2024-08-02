@@ -1,28 +1,9 @@
 """
-	Program Name Goes Here
+    Cortical Bone Generator
 	Zachary Toth, August 2024
 
-    Description goes here.
+    Program for the generation of three-dimensional models of micron-scale cortical bone.
     
-        namestyle
-            # 'Timestamp' or name to be used
-                'Timestamp' saves file as 'YYYY_MM_DD_hh_mm_ss.tif'
-                namestyle = 'file_name.tif'
-        
-        param_file
-            # File passes set of parameters to use
-            # Choose one from ./param_files
-            # or None to generate from LoadParameters.py file
-        
-        exports
-            # list of filetypes to export
-            # subset of ['tiff', 'txt', 'stl', 'xlsx']
-            # txt files exported can be used as parameter files
-                    
-        rng_method
-            # Set to False to use random seed.
-            # Set to True to keep the same seed used last generation. 
-            # Any other value will be used as a seed.
 
 	Usage:
 		Python:
@@ -51,6 +32,28 @@ from LoadParameters import LoadParameters
 
 
 def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports = ['tiff'], rng_method = False):
+
+    '''
+    namestyle
+        # 'Timestamp' or name to be used
+            'Timestamp' saves file as 'YYYY_MM_DD_hh_mm_ss.tif'
+            namestyle = 'file_name.tif'
+    
+    param_file
+        # File passes set of parameters to use
+        # Choose one from ./param_files
+        # or None to generate from LoadParameters.py file
+    
+    exports
+        # list of filetypes to export
+        # subset of ['tiff', 'txt', 'stl', 'xlsx']
+        # txt files exported can be used as parameter files
+                
+    rng_method
+        # Set to False to use random seed.
+        # Set to True to keep the same seed used last generation. 
+        # Any other value will be used as a seed.
+    '''    
 
     # Files can take a while to generate.
     # Beeps when generation is finished
