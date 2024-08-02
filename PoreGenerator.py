@@ -67,7 +67,7 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
     # sets rng based on rng_method
     RNGkey = PGf.setRNG(rng_method)
     
-    if (export.xlsx + export.txt + export.tif + export.stl) == 0:
+    if (export.xlsx + export.txt + export.tiff + export.stl) == 0:
         raise(Exception('No file outputs selected.'))
     
     # Initializes array of proper size
