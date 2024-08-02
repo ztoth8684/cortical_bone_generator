@@ -52,6 +52,8 @@ from LoadParameters import LoadParameters
 
 def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports = ['tiff'], rng_method = False):
 
+    # Files can take a while to generate.
+    # Beeps when generation is finished
     BEEP = False    
 
     option, target_porosity, export, mu, sigma, weighting, params = LoadParameters(param_file, exports)
@@ -176,17 +178,22 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
     
     # %% Save Results
     
+    # create directory to save files if not exist
     if os.path.isdir(fpath) is False:
         os.makedirs(fpath)
     
+    # prepare data to save to text/excel file
     fullcell, sheetprep, sheetcell = PGf.getTextOutput(option, mu, sigma, weighting, params, target_porosity, porosity, RNGkey, fname)
     if export.xlsx is True:
         spreadsheet_name = 'Metadata.xlsx'
+        # create spreadsheet if not exist
         if os.path.isfile(fpath+spreadsheet_name) is False:
+            # initiates spreadsheet with headers
             headerslist = {sheetprep[n]: '' for n in range(len(sheetprep))}
             headers = pd.DataFrame(headerslist, index=[0])
             headers.to_excel(fpath+spreadsheet_name, sheet_name='sheet1', index=False)
     
+        # creates new row for spreadsheet with current data
         current_params = {sheetprep[n]:sheetcell[0,n] for n in range(len(sheetprep))}
         new_row = pd.DataFrame(current_params, index=[0])
         # append to excel

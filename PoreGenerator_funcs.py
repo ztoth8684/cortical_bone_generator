@@ -75,6 +75,7 @@ def revertParameters(option, mu, sigma):
     option.maxosteonlength *= 10
    
     return option, mu, sigma
+
 #%%
 
 def nameFig(namestyle):
@@ -324,19 +325,25 @@ def getXY(option, XYprimer):
 def poreBlast(Bone):
     '''deposits bone matrix -> decrease porosity (more 1's)'''
         
+    # Create convolution kernel
     threshold = 15
     
     b = 1/threshold
     kernel = np.ones((3,3,3))*b
     kernel[1,1,1] = 1
     
+    # Convolve Bone with kernel
     conv = scipy.ndimage.convolve(Bone, kernel)
+    # Floor function to revert to binary
     rounded = np.floor(conv)
     
+    # Only change some voxels this way
+    # Because poreBlast is greedier than poreClast
     rand = np.random.randint(0, 2, Bone.shape)
     salted = np.multiply(rand,rounded).astype(dtype=np.float32)
     mixed = Bone + salted    
     
+    # Revert back to binary values
     flattened = mixed.astype(bool).astype(dtype=np.float32)
     
     return flattened
@@ -346,6 +353,7 @@ def poreBlast(Bone):
 def poreClast(Bone):
     '''removes bone matrix -> increase porosity (more 0's)'''
     
+    # Create convolution kernel
     threshold = 12
     
     b = 1/(3**3)  # borders
@@ -353,7 +361,9 @@ def poreClast(Bone):
     kernel = np.ones((3,3,3))*b
     kernel[1,1,1] = m
     
+    # Convolve Bone with kernel
     conv = scipy.ndimage.convolve(Bone, kernel, mode='constant', cval=0)
+    # Floor function to revert to binary
     rounded = np.floor(conv)
     
     return rounded
@@ -361,7 +371,11 @@ def poreClast(Bone):
 #%%
 
 def getTextOutput(option, mu, sigma, weighting, params, target_porosity, porosity, RNGkey, fname):
+    '''
+    Generates list of all parameter values for export
+    '''
     
+    # List of all parameters to be exported
     varlist = [
     'option.varLink' ,
     'option.mindiameter' ,
@@ -410,16 +424,19 @@ def getTextOutput(option, mu, sigma, weighting, params, target_porosity, porosit
     'porosity'
     ]
     
+    # creates list for text file export
     fullcell = list()
     for n in range(0, len(varlist)):
         fullcell.append(varlist[n]+' is <<'+str(eval(varlist[n]))+'>>'+'\n')
     
+    # creates header for excel file export
     sheetprep = list()
     sheetprep.append('Filename')
     sheetprep.append('')
     for n in range(2,len(varlist)+2):
         sheetprep.append(varlist[n-2])
         
+    # creates new row for excel file
     sheetcell = np.zeros([1,len(varlist)+2], dtype=object)
     sheetcell[0,0] = fname
     for n in range(2,len(varlist)+2):

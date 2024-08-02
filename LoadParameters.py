@@ -11,7 +11,11 @@ class Struct:
     pass
 
 def LoadParameters(param_file, exports):
+    '''
+    Populates all parameters needed to run program
     
+    Retrieves these from parameter file or below if no file passed
+    '''
     option = Struct()
     mu = Struct()
     sigma = Struct()
@@ -21,6 +25,8 @@ def LoadParameters(param_file, exports):
         
     export = choose_exports(exports)
     
+    # No file passed --> use below values
+    # Explanations of all parameters included
     if param_file is None:
         
         '''
@@ -35,9 +41,9 @@ def LoadParameters(param_file, exports):
         # 'Circle' (or 1) for circular grid, 'Square' (or 2) for square grid, else random
         option.LocationType = 0
         # If LocationType is not random, distance between grid lines (µm)
-        option.Spacing = 160  # 160
+        option.Spacing = 160
         # If LocationType is not random, variation of pores from grid lines (µm)
-        option.location_err = 0  # 0
+        option.location_err = 0
         # If LocationType is not random, stops generation after grid is complete
         # Can cause problems if False while location_err is low
         option.ignore_target_porosity = False
@@ -64,7 +70,7 @@ def LoadParameters(param_file, exports):
         option.variedPoreShape = True
         
         # Array size (µm): 10 micrometers/voxel
-        option.ArraySize = 2000  # 2000
+        option.ArraySize = 2000
         target_porosity = 0
         
         # Choose value from experimental distribution instead of using target_porosity
@@ -79,66 +85,70 @@ def LoadParameters(param_file, exports):
         # SED related parameters below from DOI: 10.1002/jbmr.3561
         # Parameters for SED per hole
         # Controls the distribution of pore size/irregularity
-        mu.SED = 8  # 8
-        sigma.SED = 4.5  # 4.5
-        option.SED_limit = 17  # 17
+        mu.SED = 8
+        sigma.SED = 4.5
+        option.SED_limit = 17
         
         # Parameters for Normal SED
         # diameter (µm)
-        mu.Ndiameter = 48  # 48
-        sigma.Ndiameter = 4  # 4
+        mu.Ndiameter = 48
+        sigma.Ndiameter = 4
         # circularity
-        mu.Ncircularity = 0.66  # 0.66
-        sigma.Ncircularity = 0.03  # 0.03
+        mu.Ncircularity = 0.66
+        sigma.Ncircularity = 0.03
         
         # Parameters for High SED
         # diameter (µm)
-        mu.Hdiameter = 157  # 157
-        sigma.Hdiameter = 37.5  # 37.5
+        mu.Hdiameter = 157
+        sigma.Hdiameter = 37.5
         # circularity
-        mu.Hcircularity = 0.42  # 0.42
-        sigma.Hcircularity = 0.045  # 0.045
+        mu.Hcircularity = 0.42
+        sigma.Hcircularity = 0.045
         
         # Parameters for Canal Length (µm)
-        mu.osteonlength = 1000  # 1000
-        sigma.osteonlength = 375  # 375
-        option.maxosteonlength = 2200/3 # 2200/3
+        mu.osteonlength = 1000
+        sigma.osteonlength = 375
+        option.maxosteonlength = 2200/3
         
         # Parameters for Porosity
-        mu.porosity = 0.075046512  # 0.075046512
-        sigma.porosity = 0.036744908  # 0.036744908
+        mu.porosity = 0.075046512
+        sigma.porosity = 0.036744908
         
         # Parameters for phi value selection DOI: 10.1016/8756-3282(94)90288-7
-        weighting.phi_values = [0,pi/12,pi/2]  # [0,pi/12,pi/2]
-        weighting.phi_probs = [0.5, 0.5]  # [0.5, 0.5]
+        weighting.phi_values = [0,pi/12,pi/2]
+        weighting.phi_probs = [0.5, 0.5]
         
         # Parameters for theta value selection
-        weighting.theta_values = [0, 2*pi]  # [0,2*pi]
-        weighting.theta_probs = [1]  # [1]
+        weighting.theta_values = [0, 2*pi]
+        weighting.theta_probs = [1]
         
         # Proportions of each pore shape: [Cylinder, Proximal Cone, Distal Cone,
         #                                                   Ellipsoid, Hyperboloid]
-        params.shape_proportions = [0.392, 0.094, 0.351, 0.122, 0.041]  # [0.392, 0.094, 0.351, 0.122, 0.041] DOI: 10.1111/j.1439-0264.2009.00973.x
+        # from DOI: 10.1111/j.1439-0264.2009.00973.x
+        params.shape_proportions = [0.392, 0.094, 0.351, 0.122, 0.041]
         
-        params.pores_before_networking = 75  # 75
-        params.top_branches = [0,2] # [0,2]
-        params.bottom_branches = [0,2] # [0,2]
-        params.sealed_osteon_chance = 0.068  # 0.068 # DOI: 10.1002/ar.21309
-        params.transverse_flag_onset = pi/4  # pi/4
+        params.pores_before_networking = 75
+        params.top_branches = [0,2]
+        params.bottom_branches = [0,2]
+        params.sealed_osteon_chance = 0.068 # DOI: 10.1002/ar.21309
+        params.transverse_flag_onset = pi/4
 
     else:
         
         def clean(string):
+            '''splits parameter file lines into name/value pairs'''
             out = string.replace(' is ', '').replace('>>', '').split('<<')
             return out
 
         param_file = './param_files/' + param_file
 
+        # reads parameter file to dataframe
         df = pd.read_table(param_file, header=None, dtype='string')
         lst = list()
         for n in range(0, len(df[0])): lst.append(df[0].loc[n])
         df = pd.DataFrame(list(map(clean, lst)), columns=['Variable', 'Value'])
-
+        
+        # imports parameter values from parameter file
         option.varLink = eval(df.iloc[0].Value)
         option.mindiameter = eval(df.iloc[1].Value)
         option.LocationType = eval(df.iloc[2].Value)
@@ -187,7 +197,7 @@ def LoadParameters(param_file, exports):
     return option, target_porosity, export, mu, sigma, weighting, params
 
 def choose_exports(exports):
-    
+    '''packages "exports" input into Struct'''
     class Struct:
         pass
     export = Struct()
