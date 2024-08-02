@@ -22,36 +22,12 @@ class Struct:
 
 #%%
 
-def normalizeParameters(option, mu, sigma):
-    '''Converts inputs from µm to pixel units'''
+def scaleParameters(option, mu, sigma, scale):
+    '''
+    if scale is 1/10: Converts inputs from µm to voxel units
     
-    option.mindiameter /= 10
-
-    option.Spacing /= 10
-
-    option.location_err /= 10
-
-    option.LinearDiscreteDiameters = list(np.array(option.LinearDiscreteDiameters)/10)
-    option.WeightedDiscreteDiameters = list(np.array(option.WeightedDiscreteDiameters)/10)
-
-    option.ArraySize = int(option.ArraySize/10)
-
-    mu.Ndiameter /= 10
-    sigma.Ndiameter /= 10
-
-    mu.Hdiameter /= 10
-    sigma.Hdiameter /= 10
-
-    mu.osteonlength /= 10
-    sigma.osteonlength /= 10
-    option.maxosteonlength /= 10
-   
-    return option, mu, sigma
-
-#%%
-
-def revertParameters(option, mu, sigma):
-    '''Converts inputs back from pixel to µm units'''
+    if scale is 10: Converts inputs back from voxel to µm units
+    '''
     
     option.mindiameter *= 10
 
@@ -433,14 +409,14 @@ def getTextOutput(option, mu, sigma, weighting, params, target_porosity, porosit
     sheetprep = list()
     sheetprep.append('Filename')
     sheetprep.append('')
-    for n in range(2,len(varlist)+2):
-        sheetprep.append(varlist[n-2])
-        
+    for n in range(0,len(varlist)):
+        sheetprep.append(varlist[n])
+    
     # creates new row for excel file
     sheetcell = np.zeros([1,len(varlist)+2], dtype=object)
     sheetcell[0,0] = fname
-    for n in range(2,len(varlist)+2):
-        sheetcell[0,n] = str(eval(varlist[n-2]))
+    for n in range(0,len(varlist)):
+        sheetcell[0,n+2] = str(eval(varlist[n]))
          
     
     return fullcell, sheetprep, sheetcell

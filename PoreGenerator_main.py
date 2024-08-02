@@ -57,7 +57,7 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
     BEEP = False    
 
     option, target_porosity, export, mu, sigma, weighting, params = LoadParameters(param_file, exports)
-    option, mu, sigma = PGf.normalizeParameters(option, mu, sigma)
+    option, mu, sigma = PGf.scaleParameters(option, mu, sigma, 1/10)
     # set file name
     [fpath, fname] = PGf.nameFig(namestyle)
     
@@ -173,7 +173,7 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
     Bone = ~(Bone.astype(bool))
     porosity = np.mean(Bone)
     
-    option, mu, sigma = PGf.revertParameters(option, mu, sigma)
+    option, mu, sigma = PGf.scaleParameters(option, mu, sigma, 10)
     
     
     # %% Save Results
