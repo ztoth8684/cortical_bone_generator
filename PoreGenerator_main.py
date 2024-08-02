@@ -152,7 +152,12 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
             A = random.randint(params.bottom_branches[0], params.bottom_branches[1])
             B = random.randint(params.top_branches[0], params.top_branches[1])
         
+            # Add pore to valueslog if it has branching points
             if A+B != 0:
+                # add extra rows to values log if full
+                if valueslog.shape[1] == sum(valueslog[9,:]):
+                    addlogrow = np.zeros([12,1])
+                    valueslog = np.concatenate((valueslog, addlogrow), 1)
                 valueslog[:,iteration] = [np.squeeze(i) for i in [R,C,theta,phi,x,y,minz,z,maxz,1,A,B]]
                 iteration += 1
         
