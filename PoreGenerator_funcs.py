@@ -29,26 +29,26 @@ def scaleParameters(option, mu, sigma, scale):
     if scale is 10: Converts inputs back from voxel to µm units
     '''
     
-    option.mindiameter *= 10
+    option.mindiameter *= scale
 
-    option.Spacing *= 10
+    option.Spacing *= scale
 
-    option.location_err *= 10
+    option.location_err *= scale
 
-    option.LinearDiscreteDiameters = list(np.array(option.LinearDiscreteDiameters)*10)
-    option.WeightedDiscreteDiameters = list(np.array(option.WeightedDiscreteDiameters)*10)
+    option.LinearDiscreteDiameters = list(np.array(option.LinearDiscreteDiameters)*scale)
+    option.WeightedDiscreteDiameters = list(np.array(option.WeightedDiscreteDiameters)*scale)
 
-    option.ArraySize = int(option.ArraySize*10)
+    option.ArraySize = int(option.ArraySize*scale)
 
-    mu.Ndiameter *= 10
-    sigma.Ndiameter *= 10
+    mu.Ndiameter *= scale
+    sigma.Ndiameter *= scale
 
-    mu.Hdiameter *= 10
-    sigma.Hdiameter *= 10
+    mu.Hdiameter *= scale
+    sigma.Hdiameter *= scale
 
-    mu.osteonlength *= 10
-    sigma.osteonlength *= 10
-    option.maxosteonlength *= 10
+    mu.osteonlength *= scale
+    sigma.osteonlength *= scale
+    option.maxosteonlength *= scale
    
     return option, mu, sigma
 
