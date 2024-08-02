@@ -212,7 +212,7 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
         txtfile.close()
     
     if export.tiff is True:
-        tf.imsave(fpath+fname, Bone)
+        tf.imwrite(fpath+fname, Bone)
     
     if export.stl is True:
         PGf.make3DModel(fpath, fname, Bone)
