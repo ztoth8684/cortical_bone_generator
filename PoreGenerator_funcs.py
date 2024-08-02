@@ -76,12 +76,11 @@ def nameFig(namestyle):
 def setRNG(rng_method):
     '''sets RNG seed value for generation'''
     
-    if rng_method == 1:
-        if os.path.isfile('./saved_rng.pkl'):
-            with open('saved_rng.pkl', 'rb') as f:
-                RNGkey = pickle.load(f)
-            random.seed(RNGkey)
-    elif rng_method == 0:
+    if (rng_method == 1) and os.path.isfile('./saved_rng.pkl'):
+        with open('saved_rng.pkl', 'rb') as f:
+            RNGkey = pickle.load(f)
+        random.seed(RNGkey)
+    elif (rng_method == 0) or (not os.path.isfile('./saved_rng.pkl')):
         RNGkey = random.randrange(sys.maxsize)
         random.seed(RNGkey)
         with open('saved_rng.pkl', 'wb') as f:
@@ -293,6 +292,8 @@ def getXY(option, XYprimer):
             # square grid for pore location
             x = XYprimer.SpaceList[XYprimer.it - 1] + option.location_err*(2*random.random() - 1)
             y = XYprimer.SpaceList[XYprimer.iu - 1] + option.location_err*(2*random.random() - 1)
+    else:
+        raise(ValueError('XYprimer.Locations dictionary contains references to non-0 or -1 values.'))
 
 
     return x, y, XYprimer

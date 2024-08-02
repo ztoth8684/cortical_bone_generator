@@ -227,8 +227,13 @@ def choose_exports(exports):
         exports = [exports]
     
     lst = []
-    for exp in exports: lst.append(dictionary[exp])
     
+    for exp in exports:
+        if exp in dictionary:
+            lst.append(dictionary[exp])
+        else:
+            raise(ValueError('"exports" input includes invalid type.'))
+
     if 1 in lst:
         export.xlsx = True
     if 2 in lst:
