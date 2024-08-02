@@ -36,8 +36,8 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
     '''
     namestyle
         # 'Timestamp' or name to be used
-            'Timestamp' saves file as 'YYYY_MM_DD_hh_mm_ss.tif'
-            namestyle = 'file_name.tif'
+        # 'Timestamp' saves file as 'YYYY_MM_DD_hh_mm_ss.tif'
+        # Format : 'file_name.tif'
     
     param_file
         # File passes set of parameters to use
@@ -66,6 +66,9 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
     
     # sets rng based on rng_method
     RNGkey = PGf.setRNG(rng_method)
+    
+    if (export.xlsx + export.txt + export.tif + export.stl) == 0:
+        raise(Exception('No file outputs selected.'))
     
     # Initializes array of proper size
     Bone = np.ones((option.ArraySize, option.ArraySize, option.ArraySize), dtype=np.float32)
@@ -234,15 +237,20 @@ if __name__ == "__main__":
     else: param_file = None
         
     if (len(sys.argv) > 2): # At least 2
-        namestyle = int(sys.argv[2])
+        namestyle = str(sys.argv[2])
     else: namestyle = 'Timestamp'
             
-    if (len(sys.argv) > 3):
-        exports = int(sys.argv[3])
+    if (len(sys.argv) > 3): # At least 3
+        exports = list(sys.argv[3])
     else: exports = ['tiff']
                 
-    if (len(sys.argv) > 4):
-        rng_method = int(sys.argv[4])
+    if (len(sys.argv) > 4): # At least 4
+        if sys.argv[4] == 'True':
+            rng_method = True
+        elif sys.argv[4] == 'False':
+            rng_method = False
+        else:
+            rng_method = str(sys.argv[4])
     else: rng_method = False
                 
 

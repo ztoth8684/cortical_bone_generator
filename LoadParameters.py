@@ -223,9 +223,6 @@ def choose_exports(exports):
     export.tiff = False
     export.stl = False
     
-    if type(exports) is str:
-        exports = [exports]
-    
     lst = []
     
     for exp in exports:
