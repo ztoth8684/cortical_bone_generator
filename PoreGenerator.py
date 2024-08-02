@@ -241,7 +241,7 @@ if __name__ == "__main__":
     else: namestyle = 'Timestamp'
             
     if (len(sys.argv) > 3): # At least 3
-        exports = list(sys.argv[3])
+        exports = sys.argv[3].translate({ord(i): None for i in ['[',']',' ']}).split(',')
     else: exports = ['tiff']
                 
     if (len(sys.argv) > 4): # At least 4
