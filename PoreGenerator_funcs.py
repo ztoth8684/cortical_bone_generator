@@ -280,6 +280,11 @@ def getXY(option, XYprimer):
                 XYprimer.grid_complete = 1
                 if option.ignore_target_porosity:
                     XYprimer.ignore_target_porosity = 1
+                else:
+                    XYprimer.iter += 1
+                    if XYprimer.iter == XYprimer.max_iters:
+                        XYprimer.ignore_target_porosity = 1
+                        print(f'Grid populated {XYprimer.max_iters} times without meeting target porosity. Aborting further population attempts.')
             XYprimer.it += 1
             XYprimer.iu = 1 + option.ignoreborder*Square
             if Circle:

@@ -78,3 +78,8 @@ class XYprimer:
         
         self.ignore_target_porosity = 0
         self.grid_complete = 0
+        
+        # controls failsafe for low option.location_err and False option.ignore_target_porosity
+        self.iter = 0
+        # max times grid can be filled before aborting further generation attempts
+        self.max_iters = 5

@@ -13,7 +13,7 @@
 			>>> Bone = cortical_bone_generator(None, 'Timestamp', exports, rng_method)
 
 		Terminal:
-			$  python PoreGenerator.py Defaults.txt  'Timestamp'  ['tiff'] 'seed value'
+			$  python PoreGenerator.py Defaults.txt  Timestamp  ['tiff'] 'seed string'
 """
 
 import os.path
