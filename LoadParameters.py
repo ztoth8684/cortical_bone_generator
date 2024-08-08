@@ -10,24 +10,21 @@ from numpy import pi, inf
 class Struct:
     pass
 
-def LoadParameters(param_file, exports):
+def LoadParameters(param_file):
     '''
     Populates all parameters needed to run program
-    
     Retrieves these from parameter file or below if no file passed
     '''
-    option = Struct()
-    mu = Struct()
-    sigma = Struct()
-    weighting = Struct()
-    params = Struct()
-
-        
-    export = choose_exports(exports)
     
     # No file passed --> use below values
     # Explanations of all parameters included
     if param_file is None:
+        
+        option = Struct()
+        mu = Struct()
+        sigma = Struct()
+        weighting = Struct()
+        params = Struct()
         
         '''
         Options
@@ -133,113 +130,82 @@ def LoadParameters(param_file, exports):
         params.transverse_flag_onset = pi/4
 
     else:
-        
-        def clean(string):
-            '''splits parameter file lines into name/value pairs'''
-            out = string.replace(' is ', '').replace('>>', '').split('<<')
-            return out
+        option, mu, sigma, weighting, target_porosity, params = get_params_from_file(param_file)
 
-        param_file = './param_files/' + param_file
+    return option, target_porosity, mu, sigma, weighting, params
 
-        # reads parameter file to dataframe
-        df = pd.read_table(param_file, header=None, dtype='string')
-        lst = list()
-        for n in range(0, len(df[0])): lst.append(df[0].loc[n])
-        df = pd.DataFrame(list(map(clean, lst)), columns=['Variable', 'Value'])
-        
-        # imports parameter values from parameter file
-        option.varLink = eval(df.iloc[0].Value)
-        option.mindiameter = eval(df.iloc[1].Value)
-        option.LocationType = eval(df.iloc[2].Value)
-        option.Spacing = eval(df.iloc[3].Value)
-        option.location_err = eval(df.iloc[4].Value)
-        option.ignore_target_porosity = eval(df.iloc[5].Value)
-        option.ignoreborder = eval(df.iloc[6].Value)
-        option.LinearDiscreteDiameters = eval(df.iloc[7].Value)
-        option.WeightedDiscreteDiameters = eval(df.iloc[8].Value)
-        option.LinearDiscreteCircularities = eval(df.iloc[9].Value)
-        option.WeightedDiscreteCircularities = eval(df.iloc[10].Value)
-        option.smoothPores = eval(df.iloc[11].Value)
-        option.variedPoreShape = eval(df.iloc[12].Value)
-        option.ArraySize = eval(df.iloc[13].Value)
-        option.maxosteonlength = eval(df.iloc[14].Value)
-        option.SED_limit = eval(df.iloc[15].Value)
-        option.TP_CORRECTION_FACTOR = eval(df.iloc[16].Value)
-        option.experimental_porosity = eval(df.iloc[17].Value)
-        mu.SED = eval(df.iloc[18].Value)
-        mu.Ndiameter = eval(df.iloc[19].Value)
-        mu.Ncircularity = eval(df.iloc[20].Value)
-        mu.Hdiameter = eval(df.iloc[21].Value)
-        mu.Hcircularity = eval(df.iloc[22].Value)
-        mu.osteonlength = eval(df.iloc[23].Value)
-        mu.porosity = eval(df.iloc[24].Value)
-        sigma.SED = eval(df.iloc[25].Value)
-        sigma.Ndiameter = eval(df.iloc[26].Value)
-        sigma.Ncircularity = eval(df.iloc[27].Value)
-        sigma.Hdiameter = eval(df.iloc[28].Value)
-        sigma.Hcircularity = eval(df.iloc[29].Value)
-        sigma.osteonlength = eval(df.iloc[30].Value)
-        sigma.porosity = eval(df.iloc[31].Value)
-        weighting.phi_values = eval(df.iloc[32].Value)
-        weighting.phi_probs = eval(df.iloc[33].Value)
-        weighting.theta_values = eval(df.iloc[34].Value)
-        weighting.theta_probs = eval(df.iloc[35].Value)
-        target_porosity = eval(df.iloc[36].Value)
-        params.pores_before_networking = eval(df.iloc[37].Value)
-        params.top_branches = eval(df.iloc[38].Value)
-        params.bottom_branches = eval(df.iloc[39].Value)
-        params.sealed_osteon_chance = eval(df.iloc[40].Value)
-        params.transverse_flag_onset = eval(df.iloc[41].Value)
-        params.shape_proportions = eval(df.iloc[42].Value)
 
+
+
+
+# %% Private function ############################################################################
+
+def get_params_from_file(param_file):
+    '''
+    Populates all program parameters from param_file
+    '''
+    def clean(string):
+        '''splits parameter file lines into name/value pairs'''
+        out = string.replace(' is ', '').replace('>>', '').split('<<')
+        return out
+
+    option = Struct()
+    mu = Struct()
+    sigma = Struct()
+    weighting = Struct()
+    params = Struct()
     
-    return option, target_porosity, export, mu, sigma, weighting, params
+    param_file = './param_files/' + param_file
 
-def choose_exports(exports):
-    '''packages "exports" input into Struct'''
-    class Struct:
-        pass
-    export = Struct()
-
-    dictionary = {
-        'xlsx' : 1,
-        'XLSX' : 1,
-        'excel' : 1,
-        'spreadsheet' : 1,
-        'txt' : 2,
-        'TXT' : 2,
-        'text' : 2,
-        'tiff' : 3,
-        'tif' : 3,
-        'TIFF' : 3,
-        'TIF' : 3,
-        'stl' : 4,
-        'STL' : 4
-        }
+    # reads parameter file to dataframe
+    df = pd.read_table(param_file, header=None, dtype='string')
+    lst = list()
+    for n in range(0, len(df[0])): lst.append(df[0].loc[n])
+    df = pd.DataFrame(list(map(clean, lst)), columns=['Variable', 'Value'])
     
-    export.xlsx = False
-    export.txt = False
-    export.tiff = False
-    export.stl = False
+    # imports parameter values from parameter file
+    option.varLink = eval(df.iloc[0].Value)
+    option.mindiameter = eval(df.iloc[1].Value)
+    option.LocationType = eval(df.iloc[2].Value)
+    option.Spacing = eval(df.iloc[3].Value)
+    option.location_err = eval(df.iloc[4].Value)
+    option.ignore_target_porosity = eval(df.iloc[5].Value)
+    option.ignoreborder = eval(df.iloc[6].Value)
+    option.LinearDiscreteDiameters = eval(df.iloc[7].Value)
+    option.WeightedDiscreteDiameters = eval(df.iloc[8].Value)
+    option.LinearDiscreteCircularities = eval(df.iloc[9].Value)
+    option.WeightedDiscreteCircularities = eval(df.iloc[10].Value)
+    option.smoothPores = eval(df.iloc[11].Value)
+    option.variedPoreShape = eval(df.iloc[12].Value)
+    option.ArraySize = eval(df.iloc[13].Value)
+    option.maxosteonlength = eval(df.iloc[14].Value)
+    option.SED_limit = eval(df.iloc[15].Value)
+    option.TP_CORRECTION_FACTOR = eval(df.iloc[16].Value)
+    option.experimental_porosity = eval(df.iloc[17].Value)
+    mu.SED = eval(df.iloc[18].Value)
+    mu.Ndiameter = eval(df.iloc[19].Value)
+    mu.Ncircularity = eval(df.iloc[20].Value)
+    mu.Hdiameter = eval(df.iloc[21].Value)
+    mu.Hcircularity = eval(df.iloc[22].Value)
+    mu.osteonlength = eval(df.iloc[23].Value)
+    mu.porosity = eval(df.iloc[24].Value)
+    sigma.SED = eval(df.iloc[25].Value)
+    sigma.Ndiameter = eval(df.iloc[26].Value)
+    sigma.Ncircularity = eval(df.iloc[27].Value)
+    sigma.Hdiameter = eval(df.iloc[28].Value)
+    sigma.Hcircularity = eval(df.iloc[29].Value)
+    sigma.osteonlength = eval(df.iloc[30].Value)
+    sigma.porosity = eval(df.iloc[31].Value)
+    weighting.phi_values = eval(df.iloc[32].Value)
+    weighting.phi_probs = eval(df.iloc[33].Value)
+    weighting.theta_values = eval(df.iloc[34].Value)
+    weighting.theta_probs = eval(df.iloc[35].Value)
+    target_porosity = eval(df.iloc[36].Value)
+    params.pores_before_networking = eval(df.iloc[37].Value)
+    params.top_branches = eval(df.iloc[38].Value)
+    params.bottom_branches = eval(df.iloc[39].Value)
+    params.sealed_osteon_chance = eval(df.iloc[40].Value)
+    params.transverse_flag_onset = eval(df.iloc[41].Value)
+    params.shape_proportions = eval(df.iloc[42].Value)
     
-    lst = []
-    
-    for exp in exports:
-        if exp in dictionary:
-            lst.append(dictionary[exp])
-        else:
-            raise(ValueError('"exports" input includes invalid type.'))
-
-    if 1 in lst:
-        export.xlsx = True
-    if 2 in lst:
-        export.txt = True
-    if 3 in lst:
-        export.tiff = True
-    if 4 in lst:
-        export.stl = True
-            
-    if (export.xlsx + export.txt + export.tiff + export.stl) == 0:
-        raise(Exception('No file outputs selected.'))
-        
-    return export
+    return option, mu, sigma, weighting, target_porosity, params

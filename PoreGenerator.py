@@ -34,15 +34,15 @@ from LoadParameters import LoadParameters
 def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports = ['tiff'], rng_method = False):
 
     '''
+    param_file
+        # File that passes set of parameters to use
+        # Choose one from ./param_files
+        # or None to generate from LoadParameters.py file
+        
     namestyle
         # 'Timestamp' or name to be used
         # 'Timestamp' saves file as 'YYYY_MM_DD_hh_mm_ss.tif'
         # Format : 'file_name.tif'
-    
-    param_file
-        # File passes set of parameters to use
-        # Choose one from ./param_files
-        # or None to generate from LoadParameters.py file
     
     exports
         # list of filetypes to export
@@ -60,6 +60,7 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
     # Only works on Windows devices
     BEEP = True    
 
+    export = PGf.chooseExports(exports)
     option, target_porosity, export, mu, sigma, weighting, params = LoadParameters(param_file, exports)
     option, mu, sigma = PGf.scaleParameters(option, mu, sigma, 1/10)
     # set file name

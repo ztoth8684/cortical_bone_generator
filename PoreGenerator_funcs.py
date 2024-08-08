@@ -22,6 +22,57 @@ class Struct:
 
 #%%
 
+def chooseExports(exports):
+    '''packages "exports" input into Struct'''
+    class Struct:
+        pass
+    export = Struct()
+
+    dictionary = {
+        'xlsx' : 1,
+        'XLSX' : 1,
+        'excel' : 1,
+        'spreadsheet' : 1,
+        'txt' : 2,
+        'TXT' : 2,
+        'text' : 2,
+        'tiff' : 3,
+        'tif' : 3,
+        'TIFF' : 3,
+        'TIF' : 3,
+        'stl' : 4,
+        'STL' : 4
+        }
+    
+    export.xlsx = False
+    export.txt = False
+    export.tiff = False
+    export.stl = False
+    
+    lst = []
+    
+    for exp in exports:
+        if exp in dictionary:
+            lst.append(dictionary[exp])
+        else:
+            raise(ValueError('"exports" input includes invalid type.'))
+
+    if 1 in lst:
+        export.xlsx = True
+    if 2 in lst:
+        export.txt = True
+    if 3 in lst:
+        export.tiff = True
+    if 4 in lst:
+        export.stl = True
+            
+    if (export.xlsx + export.txt + export.tiff + export.stl) == 0:
+        raise(Exception('No file outputs selected.'))
+        
+    return export
+
+# %%
+
 def scaleParameters(option, mu, sigma, scale):
     '''
     if scale is 1/10: Converts inputs from µm to voxel units
@@ -98,16 +149,11 @@ def setRNG(rng_method):
 
 #%%
 
-def getPD(mu,sigma,weighting,option):
+def getPD(mu, sigma, weighting, option):
     PD = Struct()
-    #getPD(mu,sigma,weighting,mindiameter) Outputs Probablility Distributions
-    #
-    #   Uses PD and option structs to choose method of generating radius and
-    #   circularity
-    #
-    #   mu, sigma, and PD structs contain:
-    #       Ncircularity, Ndiameter, Hcircularity, Hdiameter, SED, TOTdiameter, 
-    #       TOTcircularity
+    '''
+    Creates probability distributions from passed parameters
+    '''
     
     def span_dist(values, probs, rand_range):
         '''

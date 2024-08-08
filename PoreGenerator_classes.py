@@ -45,7 +45,8 @@ class MixtureModel(stats.rv_continuous):
         submodel_samples = [submodel.rvs(size=size) for submodel in self.submodels]
         rvs = np.choose(submodel_choices, submodel_samples)
         return rvs
-    #%%
+    
+# %%
 
 class XYprimer:
     '''
