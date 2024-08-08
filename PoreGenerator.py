@@ -57,7 +57,8 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
 
     # Files can take a while to generate.
     # Beeps when generation is finished
-    BEEP = False    
+    # Only works on Windows devices
+    BEEP = True    
 
     option, target_porosity, export, mu, sigma, weighting, params = LoadParameters(param_file, exports)
     option, mu, sigma = PGf.scaleParameters(option, mu, sigma, 1/10)
@@ -66,9 +67,6 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
     
     # sets rng based on rng_method
     RNGkey = PGf.setRNG(rng_method)
-    
-    if (export.xlsx + export.txt + export.tiff + export.stl) == 0:
-        raise(Exception('No file outputs selected.'))
     
     # Initializes array of proper size
     Bone = np.ones((option.ArraySize, option.ArraySize, option.ArraySize), dtype=np.float32)
@@ -223,7 +221,7 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
     if export.stl is True:
         PGf.make3DModel(fpath, fname, Bone)
     
-    if BEEP:
+    if BEEP and (os.name == 'nt'):
         from winsound import Beep
         Beep(500,500)
     

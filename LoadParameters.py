@@ -238,5 +238,8 @@ def choose_exports(exports):
         export.tiff = True
     if 4 in lst:
         export.stl = True
+            
+    if (export.xlsx + export.txt + export.tiff + export.stl) == 0:
+        raise(Exception('No file outputs selected.'))
         
     return export
