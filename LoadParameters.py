@@ -62,7 +62,7 @@ def LoadParameters(param_file):
         # True if nearby pores should be smoothed and merged
         option.smoothPores = True
         
-        # True if pores should have varying shape (cylinder,cone,ellipsoid,hyperboloid)
+        # True if pores should have varying shape (cylinder, cone, ellipsoid, hyperboloid)
         option.variedPoreShape = True
         
         # Array size (µm): 10 micrometers/voxel
