@@ -111,11 +111,11 @@ def LoadParameters(param_file):
         sigma.porosity = 0.036744908
         
         # Parameters for phi value selection DOI: 10.1016/8756-3282(94)90288-7
-        weighting.phi_values = [0, pi/12, pi/2]
+        weighting.phi_values = [0, pi/12, pi/2] # (radians)
         weighting.phi_probs = [0.5, 0.5]
         
         # Parameters for theta value selection
-        weighting.theta_values = [0, 2*pi]
+        weighting.theta_values = [0, 2*pi] # (radians)
         weighting.theta_probs = [1]
         
         # Proportions of each pore shape: [Cylinder, Proximal Cone, Distal Cone,
@@ -127,7 +127,7 @@ def LoadParameters(param_file):
         params.top_branches = [0,2]
         params.bottom_branches = [0,2]
         params.sealed_osteon_chance = 0.068 # DOI: 10.1002/ar.21309
-        params.transverse_flag_onset = pi/4
+        params.transverse_flag_onset = pi/4 # (radians)
 
     else:
         option, mu, sigma, weighting, target_porosity, params = get_params_from_file(param_file)
