@@ -111,7 +111,7 @@ def LoadParameters(param_file):
         sigma.porosity = 0.036744908
         
         # Parameters for phi value selection DOI: 10.1016/8756-3282(94)90288-7
-        weighting.phi_values = [0,pi/12,pi/2]
+        weighting.phi_values = [0, pi/12, pi/2]
         weighting.phi_probs = [0.5, 0.5]
         
         # Parameters for theta value selection

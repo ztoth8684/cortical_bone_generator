@@ -168,6 +168,8 @@ def getPD(mu, sigma, weighting, option):
         elif len(values) == 1:
             dist = stats.uniform(loc=values, scale = 0)
         else:
+            if sum(probs) != 1:
+                raise(ValueError('weighting.phi_probs and weighting.theta_probs must each sum to 1.'))
             dist_vector = len(probs)*[0]
         
             for n in range(len(dist_vector)):
