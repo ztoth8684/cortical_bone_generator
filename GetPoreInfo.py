@@ -9,10 +9,7 @@ import pandas as pd
 import pickle
 import matplotlib.pyplot as plt
 import os
-import cProfile
-import pstats
 from skimage import io
-from winsound import Beep
 import tifffile as tf
 
 from ccl.ccl import connected_component_labelling
@@ -21,6 +18,9 @@ from ccl.ccl import connected_component_labelling
 #%% Get Array from TIFF file
 
 def importBone(fpath, fname):
+    '''
+    Imports 'Bone' array back into python for processing
+    '''
     # reads TIFF file
     rawBone = io.imread(fpath + fname)
     # if TIFF file is RGB, flattens to B/W
@@ -40,11 +40,13 @@ def importBone(fpath, fname):
 # %% Functions for modifying images for 2D viewing in ImageJ
 
 def rotateBone(fpath, fname):
+    '''Rotates bone file so the view plane is along the long axis '''
     Bone = importBone(fpath, fname)
     Bone = np.rot90(Bone, axes=(0,2))
     tf.imsave(fpath+fname, Bone)
     
 def invertBone(fpath, fname):
+    '''Inverts bone file to swap black / white locations'''
     Bone = importBone(fpath, fname)
     Bone = ~(Bone.astype(bool))
     Bone = np.float32(Bone)
@@ -52,22 +54,23 @@ def invertBone(fpath, fname):
 
 # %%  Get Data for .tif files in folder
 
-def GetPoreData(file_directory = None):
-
-    if file_directory is None: 
-        file_directory = "./pore_files/bones_7-25/"
-    if file_directory == 'Real': 
-        file_directory = "./pore_files/real_bone/" 
+def GetPoreData(file_directory = './pore_files/'):
+    '''
+    Runs through file directory, cataloguing all .tif files
     
+    'counts' is list of lists of area of each pore
+    'values' is list of all observed pore diameters
+    '''
+    # gets list of all .tif files in directory
     fname = [f for f in os.listdir(file_directory) if f.endswith('.tif')]
-    # fname = ['pytest.tif']
     
     counts = []
     values = []
     
+    # for each file
     for f in fname:
         Bone = importBone(file_directory, f)
-        # for each slice, label and get pixel counts for each 2Dpore
+        # for each slice of file, label and get pixel counts for each 2Dpore
         for n in range(len(Bone)):    
             layer = Bone[n,:,:]
             result = connected_component_labelling(layer, 8)
@@ -82,12 +85,17 @@ def GetPoreData(file_directory = None):
                 
     values.sort(reverse=True)
     
-    Beep(500, 500)  # when done
+    if os.name == 'nt':
+        from winsound import Beep
+        Beep(500, 500)  # when done
+        
     return counts, values
 
 #%% Save Pore Data
 
 def SavePoreData(counts, values, filename):
+    '''Saves data from GetPoreData as pkl file'''
+
     fpath = "./stats_datasets/"
     if os.path.isdir(fpath) is False:
         os.makedirs(fpath)
@@ -100,6 +108,8 @@ def SavePoreData(counts, values, filename):
 #%% Read Pore Data
 
 def ReadPoreData(targetfile):
+    '''Imports values dataset from GetPoreData back in'''
+    
     targetfile = "./stats_datasets/" + targetfile
     if (os.path.isfile(targetfile) & (os.path.getsize(targetfile) > 0)):
         with open(targetfile, 'rb') as f:
@@ -109,6 +119,8 @@ def ReadPoreData(targetfile):
 # %% Create Histogram
 
 def PoreHist(values, title):
+    '''Creates histogram of pore diameters (0–60 µm, 20 bins)'''
+    
     pd.Series(values).plot.hist(grid=True, bins=20, range=(0,60), rwidth=0.9, density=True, figure=plt.figure())
     plt.title(title)
     plt.xlabel('Diameter')
@@ -119,104 +131,64 @@ def PoreHist(values, title):
 
 #%% Plot Diameter Graphs
 
-def PlotDiameterGraphs(titles=None, varnames=None):
-    if titles is None: 
-        titles = ['CT Scan Pore Diameter','4.8-15.7 Pore Diameter','7-18 Pore Diameter','7-15.7 Pore Diameter','Matching Pore Diameter','7-25 Pore Diameter']
-    if varnames is None: 
-        varnames = ['values_Real','values_48_157','values_7_18','values_7_157','values_Matching','values_7_25']
+def PlotDiameterGraphs(targetfiles, titles):
+    '''Creates histogram of pore diameters directly from PoreData file'''
+    
+    if type(targetfiles) is str: targetfiles = [targetfiles]
     if type(titles) is str: titles = [titles]
-    if type(varnames) is str: varnames = [varnames]
-    if len(titles) != len(varnames):
-        raise Exception
-
-    for c,b in zip(titles, varnames):
-        if b in locals():
-            exec("PoreHist(%s, c)" % (b))
-
-#%% Unbalanced T-Test
-
-def UnbalancedTTest(values_test, values_real):
-    
-    variance_test = pd.DataFrame(values_test).var()[0]
-    variance_real = pd.DataFrame(values_real).var()[0]
-    
-    mu_real = np.mean(values_real)
-    mu_test = np.mean(values_test)
-    sigma_real = np.std(values_real)
-    sigma_test = np.std(values_test)
-    n_real = len(values_real)
-    n_test = len(values_test)
-    ssqn_real = np.square(sigma_real)/n_real
-    ssqn_test = np.square(sigma_test)/n_test
-    
-    t = (mu_real - mu_test)/np.sqrt(ssqn_real + ssqn_test)
-    
-    df = np.square(ssqn_real + ssqn_test)/((np.square(ssqn_real)/(n_real - 1)) + (np.square(ssqn_test)/(n_test - 1)))
-    
-    return t, df, variance_real, variance_test
+    if len(titles) != len(targetfiles):
+        raise Exception('Number of titles and data files to plot do not match')
+            
+    for a,b in zip(targetfile, titles):
+        PoreHist(ReadPoreData(a), b)
 
 #%% Percent Bin Height Change
 
-def PercentBinHeightChange(Best_values = None, Literature_values = None, Real_values = None):
-    # Best_values : diameter list from parameters optimized for closeness to CT
-    if Best_values is None: 
-        Best_values = ReadPoreData('7-18PoreInfo.pkl')
-    # Literature_values: diameter list from parameters from the literature
-    if Literature_values is None: 
-        Literature_values = ReadPoreData('GenPoreInfo.pkl')
-    # Real_values : diameter list from CT scans
-    if Real_values is None: 
-        Real_values = ReadPoreData('RealPoreinfo.pkl')
+def PercentBinHeightChange(values_1, values_2):
+    '''Gets the average percent change in bin heights between samples'''
     
-    Real_incidence = []
-    Best_incidence = []
-    Literature_incidence = []
+    values_1_incidence = []
+    values_2_incidence = []
     
     range_ = 60
     bins = 20
     
     for b in range(bins):
-        Real_incidence.append(len(list(x for x in Real_values if range_*b/bins <= x < range_*(b+1)/bins))/len(Real_values))
-        Best_incidence.append(len(list(x for x in Best_values if range_*b/bins <= x < range_*(b+1)/bins))/len(Best_values))
-        Literature_incidence.append(len(list(x for x in Literature_values if range_*b/bins <= x < range_*(b+1)/bins))/len(Literature_values))
+        values_1_incidence.append(len(list(x for x in values_1 if range_*b/bins <= x < range_*(b+1)/bins))/len(values_1))
+        values_2_incidence.append(len(list(x for x in values_2 if range_*b/bins <= x < range_*(b+1)/bins))/len(values_2))
     
     
-    Delta_literature = 100*abs(np.subtract(Real_incidence, Literature_incidence))
-    Delta_best = 100*abs(np.subtract(Real_incidence, Best_incidence))
+    delta = 100*abs(np.subtract(values_2_incidence, values_1_incidence))
     
-    Best_dev = np.mean(Delta_best)
-    Best_sigma = np.std(Delta_best)
-    Lit_dev = np.mean(Delta_literature)
-    Lit_sigma = np.std(Delta_literature)
+    average = np.mean(delta)
+    sigma = np.std(delta)
     
-    print("Change Real Sample -> Values from Literature: "+str(round(Lit_dev,ndigits=2))+"±"+str(round(Lit_sigma,ndigits=2))+"%")
-    print("Change Real Sample -> Optimized Values:       "+str(round(Best_dev,ndigits=2))+"±"+str(round(Best_sigma,ndigits=2))+"%")
+    print("Change Sample 1 ->  Sample 2:       "+str(round(average,ndigits=2))+"±"+str(round(sigma,ndigits=2))+"%")
 
-#%% Runtime Profiler
-
-def RuntimeProfiler(filename = 'PoreGenerator_MK6.py'):
-    cProfile.run(filename, 'file')
-    p = pstats.Stats('file')
-    p.sort_stats('cumulative').print_stats(10)
-
-# %% Import all values lists from .pkl files
-# Note: This is hacky and for testing purposes
+# %% Gets graphs and bin height changes for all datasets
+# This serves as an example for how to use these functions
+# Note: This uses my (author's) datasets
 
 if __name__ == "__main__":
-    targetfile = ['RealPoreInfo.pkl','GenPoreInfo.pkl','7-18PoreInfo.pkl','7-15.7PoreInfo.pkl','MatchingPoreInfo.pkl','7-25PoreInfo.pkl']
-    varnames = ['values_Real','values_48_157','values_7_18','values_7_157','values_Matching','values_7_25']
     
-    targetfile = list(map(lambda x: "./stats_datasets/" + x, targetfile))
-    
-    for a,b in zip(targetfile, varnames):
-        if (os.path.isfile(a) & (os.path.getsize(a) > 0)):
-            a = a.removeprefix("./stats_datasets/")
-            exec("%s = ReadPoreData(a)" % (b))
+    targetfile = ['RealPoreInfo.pkl',
+                  'GenPoreInfo.pkl',
+                  '7-18PoreInfo.pkl',
+                  '7-15.7PoreInfo.pkl',
+                  'MatchingPoreInfo.pkl',
+                  '7-25PoreInfo.pkl']
             
-    titles = ['Pore Diameter from CT Scans','Pore Diameter from Literature Values','Pore Diameter from Optimized Values','7-15.7 Pore Diameter','Matching Pore Diameter','7-25 Pore Diameter']
+    titles = ['Pore Diameter from CT Scans',
+              'Pore Diameter from Literature Values',
+              'Pore Diameter from Optimized Values',
+              '7-15.7 Pore Diameter',
+              'Matching Pore Diameter',
+              '7-25 Pore Diameter']
 
-    for c,b in zip(titles, varnames):
-        if b in locals():
-            exec("PoreHist(%s, c)" % (b))
-            
-    del a, b, c, targetfile, varnames, titles
+    PlotDiameterGraphs(targetfile, titles)
+    
+    # Get bin height change between Real and Literature / Optimized datasets
+    print("Real Sample -> Values from Literature:")
+    PercentBinHeightChange(ReadPoreData(targetfile[0]), ReadPoreData(targetfile[1]))
+    print("Real Sample -> Optimized Values:")
+    PercentBinHeightChange(ReadPoreData(targetfile[0]), ReadPoreData(targetfile[2]))
