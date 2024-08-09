@@ -243,4 +243,3 @@ The maximum azimuthal angle after which a pores length in the x and y directions
 ### `target_porosity`
 ###### Type: float
 The porosity at which the image generates, represented as a percent of voxels with a value of 0 (porous in the image).
-***
