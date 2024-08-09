@@ -10,6 +10,7 @@ import sys
 import datetime
 import pickle
 import numpy as np
+import scipy
 import scipy.stats as stats
 import random
 import meshlib.mrmeshpy as mr
@@ -21,41 +22,123 @@ class Struct:
 
 #%%
 
-def nameFig(option):
+def chooseExports(exports):
+    '''packages "exports" input into Struct'''
+    class Struct:
+        pass
+    export = Struct()
+
+    dictionary = {
+        'xlsx' : 1,
+        'XLSX' : 1,
+        'excel' : 1,
+        'spreadsheet' : 1,
+        'txt' : 2,
+        'TXT' : 2,
+        'text' : 2,
+        'tiff' : 3,
+        'tif' : 3,
+        'TIFF' : 3,
+        'TIF' : 3,
+        'stl' : 4,
+        'STL' : 4
+        }
+    
+    export.xlsx = False
+    export.txt = False
+    export.tiff = False
+    export.stl = False
+    
+    lst = []
+    
+    for exp in exports:
+        if exp in dictionary:
+            lst.append(dictionary[exp])
+        else:
+            raise(ValueError('"exports" input includes invalid type.'))
+
+    if 1 in lst:
+        export.xlsx = True
+    if 2 in lst:
+        export.txt = True
+    if 3 in lst:
+        export.tiff = True
+    if 4 in lst:
+        export.stl = True
+            
+    if (export.xlsx + export.txt + export.tiff + export.stl) == 0:
+        raise(Exception('No file outputs selected.'))
+        
+    return export
+
+# %%
+
+def scaleParameters(option, mu, sigma, scale):
+    '''
+    if scale is 1/10: Converts inputs from µm to voxel units
+    
+    if scale is 10: Converts inputs back from voxel to µm units
+    '''
+    
+    option.mindiameter *= scale
+
+    option.Spacing *= scale
+
+    option.location_err *= scale
+
+    option.LinearDiscreteDiameters = list(np.array(option.LinearDiscreteDiameters)*scale)
+    option.WeightedDiscreteDiameters = list(np.array(option.WeightedDiscreteDiameters)*scale)
+
+    option.ArraySize = int(option.ArraySize*scale)
+
+    mu.Ndiameter *= scale
+    sigma.Ndiameter *= scale
+
+    mu.Hdiameter *= scale
+    sigma.Hdiameter *= scale
+
+    mu.osteonlength *= scale
+    sigma.osteonlength *= scale
+    option.maxosteonlength *= scale
+   
+    return option, mu, sigma
+
+#%%
+
+def nameFig(namestyle):
     '''sets name for the file generated'''
     
     # File name:
     fpath = './pore_files/'
-    if option.namestyle == 'Timestamp':
+    if namestyle == 'Timestamp':
         clock_ = datetime.datetime.now()
         fname = clock_.strftime("%Y_%m_%d_%H_%M_%S") + '.tif'
     else:
         banlist = ['<','>',':','\"','/','\\','|','?','*']
-        option.namestyle = option.namestyle.translate({ord(i): None for i in banlist})
-        if '.tif' in option.namestyle:
-            fname = option.namestyle
+        namestyle = namestyle.translate({ord(i): None for i in banlist})
+        if namestyle.endswith('.tif'):
+            fname = namestyle
         else:
-            fname = option.namestyle + '.tif'
+            fname = namestyle + '.tif'
             
     return fpath,fname
 #%%
 
-def setRNG(option):
+def setRNG(rng_method):
     '''sets RNG seed value for generation'''
     
-    if option.rng_method == 1:
-        if os.path.isfile('./saved_rng.pkl'):
-            with open('saved_rng.pkl', 'rb') as f:
-                RNGkey = pickle.load(f)
-            random.seed(RNGkey)
-    elif option.rng_method == 0:
+    if (rng_method == 1) and os.path.isfile('./saved_rng.pkl'):
+        with open('saved_rng.pkl', 'rb') as f:
+            RNGkey = pickle.load(f)
+        random.seed(RNGkey)
+    elif (rng_method == 0) or (not os.path.isfile('./saved_rng.pkl')):
         RNGkey = random.randrange(sys.maxsize)
         random.seed(RNGkey)
         with open('saved_rng.pkl', 'wb') as f:
             pickle.dump(RNGkey, f)
     else:
         rngseed = []
-        for character in option.rng_method:
+        for character in rng_method:
             rngseed.append(ord(character))
         RNGkey = sum(rngseed)
         random.seed(RNGkey)
@@ -66,24 +149,11 @@ def setRNG(option):
 
 #%%
 
-def getPD(mu,sigma,weighting,option):
+def getPD(mu, sigma, weighting, option):
     PD = Struct()
-    #getPD(mu,sigma,weighting,mindiameter) Outputs Probablility Distributions
-    #
-    #   Uses PD and option structs to choose method of generating radius and
-    #   circularity
-    #
-    #   mu, sigma, and PD structs contain:
-    #       Ncircularity, Ndiameter, Hcircularity, Hdiameter, SED, TOTdiameter, 
-    #       TOTcircularity
-    
-    def trunc_dist(mu, sigma, lower, upper):
-        # reindexes limits according to truncnorm documentation
-        a = (lower - mu)/sigma
-        b = (upper - mu)/sigma
-        dist = stats.truncnorm(a=a, b=b, loc=mu, scale=sigma)
-        
-        return dist
+    '''
+    Creates probability distributions from passed parameters
+    '''
     
     def span_dist(values, probs, rand_range):
         '''
@@ -98,6 +168,8 @@ def getPD(mu,sigma,weighting,option):
         elif len(values) == 1:
             dist = stats.uniform(loc=values, scale = 0)
         else:
+            if sum(probs) != 1:
+                raise(ValueError('weighting.phi_probs and weighting.theta_probs must each sum to 1.'))
             dist_vector = len(probs)*[0]
         
             for n in range(len(dist_vector)):
@@ -109,10 +181,10 @@ def getPD(mu,sigma,weighting,option):
     # Probability distributions for linked diameters and circularities
     # Normal SED (small, regular pores)
     PD.Ncircularity = stats.norm(loc=mu.Ncircularity, scale=sigma.Ncircularity)
-    PD.Ndiameter = trunc_dist(option.mindiameter, np.Inf, mu.Ndiameter, sigma.Ndiameter)
+    PD.Ndiameter = stats.truncnorm(a=((option.mindiameter-mu.Ndiameter)/sigma.Ndiameter) ,b=np.inf,loc=mu.Ndiameter, scale=sigma.Ndiameter)
     # High SED (larger, irregular pores)
     PD.Hcircularity = stats.norm(loc=mu.Hcircularity, scale=sigma.Hcircularity)
-    PD.Hdiameter = trunc_dist(option.mindiameter, np.Inf, mu.Hdiameter, sigma.Hdiameter)
+    PD.Hdiameter = stats.truncnorm(a=((option.mindiameter-mu.Hdiameter)/sigma.Hdiameter), b=np.inf,loc=mu.Hdiameter, scale=sigma.Hdiameter)
     # SED distribution
     PD.SED = stats.norm(loc=mu.SED, scale=sigma.SED)
 
@@ -126,9 +198,9 @@ def getPD(mu,sigma,weighting,option):
 
     # Probability distributions for number/ length of pores
     # Minimum porosity clipped at 0.01
-    PD.porosity = trunc_dist(mu.porosity, sigma.porosity, 0.01, np.Inf)
+    PD.porosity = stats.truncnorm(a=((0.01-mu.porosity)/sigma.porosity) ,b=np.inf,loc=mu.porosity, scale=sigma.porosity)
     # Maximum clipped at maxosteonlength
-    PD.osteonlength = trunc_dist(mu.osteonlength, sigma.osteonlength, 0, option.maxosteonlength)
+    PD.osteonlength = stats.truncnorm(a=(-mu.osteonlength/sigma.osteonlength) ,b=((option.maxosteonlength-mu.osteonlength)/sigma.osteonlength),loc=mu.osteonlength, scale=sigma.osteonlength)
 
     # Probability distributions for azimuthal angle
     PD.phi = span_dist(weighting.phi_values, weighting.phi_probs, [0, 0.5*np.pi])
@@ -182,7 +254,9 @@ def networkPore(valueslog, minz, z, maxz, iteration):
     maxz = maxz - z
     minz = minz - z
     # picks a random pore
-    select = random.randint(0,sum(valueslog[9,:])-1)
+    numpores = sum(valueslog[9,:])
+    numpores = numpores.astype(int)
+    select = random.randint(0,numpores-1)
     # pool of 'spaces' on top and bottom of pore
     Mpool = [0]*int(valueslog[10,select]) + [1]*int(valueslog[11,select])
     # picks from the pool
@@ -254,10 +328,15 @@ def getXY(option, XYprimer):
                 XYprimer.grid_complete = 1
                 if option.ignore_target_porosity:
                     XYprimer.ignore_target_porosity = 1
-                XYprimer.it += 1
-                XYprimer.iu = 1 + option.ignoreborder*Square
-                if Circle:
-                    XYprimer.AngleList = np.linspace(0, 2*np.pi, XYprimer.it*int(np.sqrt(option.ArraySize/option.Spacing)))
+                else:
+                    XYprimer.iter += 1
+                    if XYprimer.iter == XYprimer.max_iters:
+                        XYprimer.ignore_target_porosity = 1
+                        print(f'Grid populated {XYprimer.max_iters} times without meeting target porosity. Aborting further population attempts.')
+            XYprimer.it += 1
+            XYprimer.iu = 1 + option.ignoreborder*Square
+            if Circle:
+                XYprimer.AngleList = np.linspace(0, 2*np.pi, XYprimer.it*int(np.sqrt(option.ArraySize/option.Spacing)))
         if Circle:
             # circular grid for pore location
             x = (0.5*option.ArraySize + XYprimer.SpaceList[XYprimer.it - 1]*np.cos(XYprimer.AngleList[XYprimer.iu - 1])) + option.location_err*(2*random.random() - 1)
@@ -266,6 +345,8 @@ def getXY(option, XYprimer):
             # square grid for pore location
             x = XYprimer.SpaceList[XYprimer.it - 1] + option.location_err*(2*random.random() - 1)
             y = XYprimer.SpaceList[XYprimer.iu - 1] + option.location_err*(2*random.random() - 1)
+    else:
+        raise(ValueError('XYprimer.Locations dictionary contains references to non-0 or -1 values.'))
 
 
     return x, y, XYprimer
@@ -274,45 +355,57 @@ def getXY(option, XYprimer):
 def poreBlast(Bone):
     '''deposits bone matrix -> decrease porosity (more 1's)'''
         
-    adjacency = [(i,j,k) for i in (-1,0,1) for j in (-1,0,1) for k in (-1,0,1) if not (i == j == k == 0)] #the adjacency matrix
+    # Create convolution kernel
+    threshold = 15
+    
+    b = 1/threshold
+    kernel = np.ones((3,3,3))*b
+    kernel[1,1,1] = 1
+    
+    # Convolve Bone with kernel
+    conv = scipy.ndimage.convolve(Bone, kernel)
+    # Floor function to revert to binary
+    rounded = np.floor(conv)
+    
+    # Only change some voxels this way
+    # Because poreBlast is greedier than poreClast
+    rand = np.random.randint(0, 2, Bone.shape)
+    salted = np.multiply(rand,rounded).astype(dtype=np.float32)
+    mixed = Bone + salted    
+    
+    # Revert back to binary values
+    flattened = mixed.astype(bool).astype(dtype=np.float32)
+    
+    return flattened
 
-    BoneMerger = np.zeros(Bone.shape, dtype=object)
-    BoneOrig = Bone
-
-    for ia in range(1,Bone.shape[0]-1):
-        for ib in range(1,Bone.shape[1]-1):
-            for ic in range(1,Bone.shape[2]-1):
-                if BoneOrig[ia,ib,ic] == 0:
-                    BoneMerger[ia,ib,ic] = [BoneOrig[ia+dx, ib+dy, ic+dz] for dx, dy, dz in adjacency]
-                    BoneMerger[ia,ib,ic] = sum(list(map(int,BoneMerger[ia,ib,ic])))
-                if BoneMerger[ia,ib,ic] >= 15 and random.randint(0,1) == 0:
-                    Bone[ia,ib,ic] = 1
-
-    return Bone
 #%%
 
 def poreClast(Bone):
     '''removes bone matrix -> increase porosity (more 0's)'''
     
-    adjacency = [(i,j,k) for i in (-1,0,1) for j in (-1,0,1) for k in (-1,0,1) if not (i == j == k == 0)] #the adjacency matrix
-
-    BoneMerger = np.zeros(Bone.shape, dtype=object)
-    BoneOrig = Bone
+    # Create convolution kernel
+    threshold = 12
     
-    for ia in range(1,Bone.shape[0]-1):
-        for ib in range(1,Bone.shape[1]-1):
-            for ic in range(1,Bone.shape[2]-1):
-                if BoneOrig[ia,ib,ic] == 1:
-                    BoneMerger[ia,ib,ic] = [BoneOrig[ia+dx, ib+dy, ic+dz] for dx, dy, dz in adjacency]
-                    BoneMerger[ia,ib,ic] = sum(list(map(int,BoneMerger[ia,ib,ic])))
-                if BoneMerger[ia,ib,ic] <= 12:
-                    Bone[ia,ib,ic] = 0
+    b = 1/(3**3)  # borders
+    m = 1 - b*(threshold+1)  # middle
+    kernel = np.ones((3,3,3))*b
+    kernel[1,1,1] = m
+    
+    # Convolve Bone with kernel
+    conv = scipy.ndimage.convolve(Bone, kernel, mode='constant', cval=0)
+    # Floor function to revert to binary
+    rounded = np.floor(conv)
+    
+    return rounded
 
-    return Bone              
 #%%
 
-def getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey, fname):
+def getTextOutput(option, mu, sigma, weighting, params, target_porosity, porosity, RNGkey, fname):
+    '''
+    Generates list of all parameter values for export
+    '''
     
+    # List of all parameters to be exported
     varlist = [
     'option.varLink' ,
     'option.mindiameter' ,
@@ -330,18 +423,22 @@ def getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey,
     'option.ArraySize' ,
     'option.maxosteonlength' ,
     'option.SED_limit',
+    'option.TP_CORRECTION_FACTOR',
+    'option.experimental_porosity',
     'mu.SED' ,
     'mu.Ndiameter' ,
     'mu.Ncircularity' ,
     'mu.Hdiameter' ,
     'mu.Hcircularity' ,
     'mu.osteonlength' ,
+    'mu.porosity',
     'sigma.SED' ,
     'sigma.Ndiameter' ,
     'sigma.Ncircularity' ,
     'sigma.Hdiameter' ,
     'sigma.Hcircularity' ,
     'sigma.osteonlength' ,
+    'sigma.porosity',
     'weighting.phi_values' ,
     'weighting.phi_probs' ,
     'weighting.theta_values' ,
@@ -354,22 +451,26 @@ def getTextOutput(option, mu, sigma, weighting, params, target_porosity, RNGkey,
     'params.transverse_flag_onset' ,
     'params.shape_proportions' ,
     'RNGkey' ,
+    'porosity'
     ]
     
+    # creates list for text file export
     fullcell = list()
     for n in range(0, len(varlist)):
-        fullcell.append('The value of '+varlist[n]+' is <<'+str(eval(varlist[n]))+'>>'+'\n')
+        fullcell.append(varlist[n]+' is <<'+str(eval(varlist[n]))+'>>'+'\n')
     
+    # creates header for excel file export
     sheetprep = list()
     sheetprep.append('Filename')
     sheetprep.append('')
-    for n in range(2,len(varlist)+2):
-        sheetprep.append(varlist[n-2])
-        
+    for n in range(0,len(varlist)):
+        sheetprep.append(varlist[n])
+    
+    # creates new row for excel file
     sheetcell = np.zeros([1,len(varlist)+2], dtype=object)
     sheetcell[0,0] = fname
-    for n in range(2,len(varlist)+2):
-        sheetcell[0,n] = str(eval(varlist[n-2]))
+    for n in range(0,len(varlist)):
+        sheetcell[0,n+2] = str(eval(varlist[n]))
          
     
     return fullcell, sheetprep, sheetcell
@@ -383,7 +484,7 @@ def make3DModel(fpath, fname, Bone):
     # Mesh elements per voxel side length
     res = 1
     
-    Bone32 = np.float32(~Bone)
+    Bone32 = np.float32(~Bone.astype(bool))
     simpleVolume = mrn.simpleVolumeFrom3Darray(Bone32)
     floatGrid = mr.simpleVolumeToDenseGrid(simpleVolume)
     mesh = mr.gridToMesh(floatGrid, mr.Vector3f(1/res, 1/res, 1/res), 0.5)

@@ -1,0 +1,43 @@
+option.varLink is <<True>>
+option.mindiameter is <<0.0>>
+option.LocationType is <<0>>
+option.Spacing is <<160.0>>
+option.location_err is <<0.0>>
+option.ignore_target_porosity is <<False>>
+option.ignoreborder is <<False>>
+option.LinearDiscreteDiameters is <<[]>>
+option.WeightedDiscreteDiameters is <<[]>>
+option.LinearDiscreteCircularities is <<[]>>
+option.WeightedDiscreteCircularities is <<[]>>
+option.smoothPores is <<True>>
+option.variedPoreShape is <<True>>
+option.ArraySize is <<2000>>
+option.maxosteonlength is <<733.3333333333335>>
+option.SED_limit is <<17>>
+option.TP_CORRECTION_FACTOR is <<1>>
+option.experimental_porosity is <<True>>
+mu.SED is <<8>>
+mu.Ndiameter is <<70.0>>
+mu.Ncircularity is <<0.66>>
+mu.Hdiameter is <<180.0>>
+mu.Hcircularity is <<0.42>>
+mu.osteonlength is <<1000.0>>
+mu.porosity is <<0.075046512>>
+sigma.SED is <<4.5>>
+sigma.Ndiameter is <<4.0>>
+sigma.Ncircularity is <<0.03>>
+sigma.Hdiameter is <<37.5>>
+sigma.Hcircularity is <<0.045>>
+sigma.osteonlength is <<375.0>>
+sigma.porosity is <<0.036744908>>
+weighting.phi_values is <<[0, pi/12, pi/2]>>
+weighting.phi_probs is <<[0.5, 0.5]>>
+weighting.theta_values is <<[0, 2*pi]>>
+weighting.theta_probs is <<[1]>>
+target_porosity is <<0>>
+params.pores_before_networking is <<75>>
+params.top_branches is <<[0, 2]>>
+params.bottom_branches is <<[0, 2]>>
+params.sealed_osteon_chance is <<0.068>>
+params.transverse_flag_onset is <<pi/4>>
+params.shape_proportions is <<[0.392, 0.094, 0.351, 0.122, 0.041]>>
