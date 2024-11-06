@@ -86,6 +86,8 @@ def LoadParameters(param_file):
         # these do nothing and need to be removed
         mu.SED = 0
         sigma.SED = 1
+        # this is how to reverse which parameter is in charge
+        # option.SED_limit = stats.norm.ppf(SED_weighting[0])
         
         # Parameters for Normal SED
         # diameter (µm)
