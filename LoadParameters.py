@@ -83,6 +83,9 @@ def LoadParameters(param_file):
         # Controls the distribution of pore size/irregularity
         # Number of standard deviations within to generate normal SED pores
         option.SED_limit = 2
+        # these do nothing and need to be removed
+        mu.SED = 0
+        sigma.SED = 1
         
         # Parameters for Normal SED
         # diameter (µm)
