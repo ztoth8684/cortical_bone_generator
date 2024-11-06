@@ -81,9 +81,9 @@ def LoadParameters(param_file):
         # SED related parameters below from DOI: 10.1002/jbmr.3561
         # Parameters for SED per hole
         # Controls the distribution of pore size/irregularity
-        mu.SED = 8
-        sigma.SED = 4.5
-        option.SED_limit = 17
+        mu.SED = 0
+        sigma.SED = 1
+        option.SED_limit = 2
         
         # Parameters for Normal SED
         # diameter (µm)

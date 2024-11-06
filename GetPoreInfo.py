@@ -123,7 +123,7 @@ def PoreHist(values, title):
     
     pd.Series(values).plot.hist(grid=True, bins=20, range=(0,60), rwidth=0.9, density=True, figure=plt.figure())
     plt.title(title)
-    plt.xlabel('Diameter')
+    plt.xlabel('Diameter, µm')
     plt.ylabel('Proportion of Total Pores')
     plt.grid(axis='y', alpha=0.75)
     plt.xlim([0,60])
