@@ -186,11 +186,11 @@ def getPD(mu, sigma, weighting, option):
     PD.Hcircularity = stats.norm(loc=mu.Hcircularity, scale=sigma.Hcircularity)
     PD.Hdiameter = stats.truncnorm(a=((option.mindiameter-mu.Hdiameter)/sigma.Hdiameter), b=np.inf,loc=mu.Hdiameter, scale=sigma.Hdiameter)
     # SED distribution
-    PD.SED = stats.norm(loc=mu.SED, scale=sigma.SED)
+    PD.SED = stats.norm()
 
     # Calculates weighting split for unlinked distributions
     split = lambda num: [num, 1-num]
-    SED_weighting = split(stats.norm(mu.SED, sigma.SED).cdf(option.SED_limit))
+    SED_weighting = split(stats.norm().cdf(option.SED_limit))
 
     # Probability distributions for unlinked diameters and circularities    
     PD.TOTdiameter = MixtureModel([PD.Ndiameter, PD.Hdiameter], SED_weighting)
