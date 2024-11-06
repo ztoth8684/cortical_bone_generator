@@ -155,6 +155,9 @@ def getPD(mu, sigma, weighting, option):
     Creates probability distributions from passed parameters
     '''
     
+    mu.SED = 1
+    sigma.SED = 0
+    
     def span_dist(values, probs, rand_range):
         '''
         Creates a distribution broken into weighted self-uniform spans
