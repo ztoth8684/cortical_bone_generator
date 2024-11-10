@@ -119,127 +119,122 @@ exec(open('<file_location>/SetupBoneImg.py').read())
 ImageJ macro that calculates the porosity of a 3D TIF stack. Can be used to get the bone porosity from a CT scan for use in the TargetPorosity parameter.
 # Settings / Parameters
 Below is a list of all settings and parameters that can be changed to vary the image generated. This does not include the arguments of the main function.
-### `option.varlink`
+### Radius-Circularity Correlation {`option.varlink`}
 ###### Type: bool
 If true, pore radius and circularity will be linked such that radius values significantly different from the mean will be paired with circularity values significantly different from the mean. In effect, larger pores will also tend to be more oblong.
-### `option.mindiameter`
+### Minimum Diameter {`option.mindiameter`}
 ###### Type: float
 Sets a lower bound for the diameter of pores generated. Units are in µm.
-### `option.LocationType`
+### Generation Pattern {`option.LocationType`}
 ###### Type: string
 Defines the method that determines pore location. If set to 'Radial,' pores are generated in a radial pattern. If set to 'Square,' pores are generated in a square grid. Otherwise, x and y coordinates are selected randomly. Z coordinates for each pore are random regardless of this setting.
 
-Note: `target_porosity` may be overshot in order to construct a complete grid for very low values.
-### `option.Spacing`
+Note: `target_porosity` may be overshot for 'Radial' or 'Square' methods in order to construct a complete grid for very low porosity values.
+### Pore Spacing {`option.Spacing`}
 ###### Type: float
 If `option.LocationType` is not random, the spacing between pores. Units are in µm.
-### `option.location_err`
+### Grid Random Offset {`option.location_err`}
 ###### Type: float
 If `option.LocationType` is not random, the magnitude of the random offset between grid lines and where pores are actually generated. Units are in µm.
-### `option.ignore_target_porosity`
+### Repeat Grid Population {`option.ignore_target_porosity`}
 ###### Type: bool
 If `option.LocationType` is not random, whether to stop pore generation after the grid has been completed.
-### `option.ignoreborder`
+### Grid Edge Population {`option.ignoreborder`}
 ###### Type: bool
 If `option.LocationType` is 'Square', whether to generate pores along the border of the image.
-### `option.LinearDiscreteDiameters`
+### Uniform Diameter Choice {`option.LinearDiscreteDiameters`}
 ###### Type: list of floats
 If this array is not empty, the diameter of each pore is chosen randomly from this list instead of from statistical distributions.
 
-Mutually exclusie with `option.WeightedDiscreteDiameters`.
-### `option.WeightedDiscreteDiameters`
+Mutually exclusive with `option.WeightedDiscreteDiameters`.
+### Weighted Diameter Choice {`option.WeightedDiscreteDiameters`}
 ###### Type: list of floats
 If this array is not empty, the diameter of each pore is generated from distributions as normal, then rounded to the nearest value present in this list.
 
 Mutually exclusive with `option.LinearDiscreteDiameters`.
-### `option.LinearDiscreteCircularities`
+### Uniform Circularity Choice {`option.LinearDiscreteCircularities`}
 ###### Type: list of floats
 If this array is not empty, the circularity of each pore is chosen randomly from this list instead of from statistical distributions.
 
 Mutually exclusive with `option.WeightedDiscreteCircularities`.
-### `option.WeightedDiscreteCircularities`
+### Weighted Circularity Choice {`option.WeightedDiscreteCircularities`}
 ###### Type: list of floats
 If this array is not empty, the circularity of each pore is generated from distributions as normal, then rounded to the nearest value present in this list.
 
 Mutually exclusive with `option.LinearDiscreteCircularities`.
-### `option.smoothPores`
+### Pore Smoothing {`option.smoothPores`}
 ###### Type: bool
 Calls `poreBlast` and `poreClast` multiple times in order to smooth geometric boundaries and make shapes generated look more natural.
-### `option.variedPoreShape`
+### Pore Shape Variation {`option.variedPoreShape`}
 ###### Type: bool
 Adds variation in the shape of pores, using ellipsoids, hyperboloids, and cones, in addition to cylinders. Ratios to be used of each shape is stored in the `param.shape_proportions` variable.
-### `option.ArraySize`
+### Core Size {`option.ArraySize`}
 ###### Type: float
 Side length in µm of cubic .tif file generated. The scale is 10 micrometers/voxel.
-### `option.experimental_porosity`
+### Porosity from Distribution {`option.experimental_porosity`}
 ###### Type: bool
 Whether to choose the porosity value from the distribution formed by `mu.porosity` and `sigma.porosity` instead of the inputted value.
-### `option.TP_CORRECTION_FACTOR`
+### Porosity Correction Factor {`option.TP_CORRECTION_FACTOR`}
 ###### Type: float
 `target_porosity` is divided by this value if `option.smoothPores` is True in order to compensate for the variation in final porosity caused by this routine.
 
 Values to use for this parameter at a given porosity can be found by comparing target and actual porosity after generating such samples. 
-### `mu/sigma .SED`
+### Extreme Pore Chance {`option.SED_limit`}
 ###### Type: float
-Parameters for the frequency at which pores generate with extreme values for diameter and circularity. 
-### `option.SED_limit`
-###### Type: float
-High SED distributions are used if a value generated from the `mu.SED` / `sigma.SED` parameters is greater than this value. 
-
-If `option.var_link` is False, a cumulative distribution function is generated from these SED parameters.
-### `mu/sigma .Ndiameter`
+Proportion of pores that are generated using 'normal' diameter and circularity distributions, rather than 'high' distributions.
+### Diameter (Normal SED) {`mu.Ndiameter / sigma.Ndiameter`}
 ###### Type: float
 Parameters for diameter when more moderate values are chosen by SED processes.
-### `mu/sigma .Ncircularity`
+### Circularity (Normal SED) {`mu.Ncircularity / sigma.Ncircularity`}
 ###### Type: float
 Parameters for circularity when more moderate values are chosen by SED processes.
-### `mu/sigma .Hdiameter`
+### Diameter (High SED) {`mu.Hdiameter / sigma.Hdiameter`}
 ###### Type: float
 Parameters for diameter when more extreme values are chosen by SED processes.
-### `mu/sigma .Hcircularity`
+### Circularity (High SED) {`muHcircularity / sigma.Hcircularity`}
 ###### Type: float
 Parameters for circularity when more extreme values are chosen by SED processes.
-### `mu/sigma .osteonlength`
+### Pore Length {`mu.osteonlength / sigma.osteonlength`}
 ###### Type: float
 Parameters for the length of a given pore in the z direction
-### `option.maxosteonlength`
+### Maximum Pore Length {`option.maxosteonlength`}
 ###### Type: float
 The maximum length for a pore to generate in the z direction. Works with `mu.osteonlength` and `sigma.osteonlength` to determine how long a given pore should be.
-### `mu/sigma .porosity`
+### Porosity {`mu.porosity / sigma.porosity`}
 ###### Type: float
 Parameters for experimental distribution of porosity values.
-### `weighting.phi_values`
+### Azimuthal Angles {`weighting.phi_values`}
 ###### Type: list of floats
 List the azimuthal angles between which pores are generated. Units are in radians.
 
 Note: use [0] for all pores to generate vertically.
-### `weighting.phi_probs`
+### Azimuthal Angle Weighting {`weighting.phi_probs`}
 ###### Type: list of floats that sum to 1
 Chance for azimuthal angles to generate in a given range. The Nth value of this list is the chance for a given pore to generate at an angle between the Nth and (N+1)th value of `weighting.phi_values`.
-### `weighting.theta_values`
+### Polar Angles {`weighting.theta_values`}
 ###### Type: list of floats
 List the radial angles between which pores are generated. Units are in radians.
-### `weighting.theta_probs`
+### Polar Angle Weighting {`weighting.theta_probs`}
 ###### Type: list of floats that sum to 1
-Chance for radial angles to generate in a given range. The Nth value of this list is the chance for a given pore to generate at an angle between the Nth and (N+1)th value of `theta.phi_values`.
-### `params.shape_proportions`
+Chance for radial angles to generate in a given range. The Nth value of this list is the chance for a given pore to generate at an angle between the Nth and (N+1)th value of `weighting.theta_values`.
+### Shape Proportions {`params.shape_proportions`}
 ###### Type: length-5 list of floats that sum to 1
 Used with option.variedPoreShape to supply the chances of each pore shape generating. The values of this array are as follows: cylinder, proximal opening cone, distal opening cone, ellipsoid, hyperboloid.
-### `params.pores_before_networking`
+### Pores Before Networking {`params.pores_before_networking`}
 ###### Type: int
 The number of pores to generate with random x and y coordinates before the networkPore function begins being used to form a networked structure.
-### `params.top_branches`
+### Branches (Top) {`params.top_branches`}
 ###### Type: length-2 list of ints
 Range of number of pores that could branch off the top of each pore in a networked structure.
-### `params.bottom_branches`
+### Branches (Bottom) {`params.bottom_branches`}
 ###### Type: length-2 list of ints
 Range of number of pores that could branch off the bottom of each pore in a networked structure.
-### `params.sealed_osteon_chance`
+### Sealed Osteon Chance {`params.sealed_osteon_chance`}
 ###### Type: float
 The chance for a given pore to generate with random x and y coordinates after the `params.pores_before_networking` threshold has been reached.
-### `params.transverse_flag_onset`
+### Transverse Pore Azimuth Limit {`params.transverse_flag_onset`}
 ###### Type: float
 The maximum azimuthal angle after which a pores length in the x and y directions is limited. Units are in radians.
-### `target_porosity`
+### Target Porosity {`target_porosity`}
 ###### Type: float
 The porosity at which the image generates, represented as a percent of voxels with a value of 0 (porous in the image).
