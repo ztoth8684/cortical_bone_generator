@@ -219,10 +219,10 @@ List the radial angles between which pores are generated. Units are in radians.
 Chance for radial angles to generate in a given range. The Nth value of this list is the chance for a given pore to generate at an angle between the Nth and (N+1)th value of `weighting.theta_values`.
 ### Shape Proportions {`params.shape_proportions`}
 ###### Type: length-5 list of floats that sum to 1
-Used with option.variedPoreShape to supply the chances of each pore shape generating. The values of this array are as follows: cylinder, proximal opening cone, distal opening cone, ellipsoid, hyperboloid.
+Used with `option.variedPoreShape` to supply the chances of each pore shape generating. The values of this array are as follows: cylinder, proximal opening cone, distal opening cone, ellipsoid, hyperboloid.
 ### Pores Before Networking {`params.pores_before_networking`}
 ###### Type: int
-The number of pores to generate with random x and y coordinates before the networkPore function begins being used to form a networked structure.
+The number of pores to generate with random x and y coordinates before the `networkPore` function begins being used to form a networked structure.
 ### Branches (Top) {`params.top_branches`}
 ###### Type: length-2 list of ints
 Range of number of pores that could branch off the top of each pore in a networked structure.
