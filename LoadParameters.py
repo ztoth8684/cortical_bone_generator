@@ -83,11 +83,6 @@ def LoadParameters(param_file):
         # Controls the distribution of pore size/irregularity
         # Number of standard deviations within to generate normal SED pores
         option.SED_limit = 2
-        # these do nothing and need to be removed
-        mu.SED = 0
-        sigma.SED = 1
-        # this is how to reverse which parameter is in charge
-        # option.SED_limit = stats.norm.ppf(SED_weighting[0])
         
         # Parameters for Normal SED
         # diameter (µm)
@@ -186,30 +181,28 @@ def get_params_from_file(param_file):
     option.SED_limit = eval(df.iloc[15].Value)
     option.TP_CORRECTION_FACTOR = eval(df.iloc[16].Value)
     option.experimental_porosity = eval(df.iloc[17].Value)
-    mu.SED = eval(df.iloc[18].Value)
-    mu.Ndiameter = eval(df.iloc[19].Value)
-    mu.Ncircularity = eval(df.iloc[20].Value)
-    mu.Hdiameter = eval(df.iloc[21].Value)
-    mu.Hcircularity = eval(df.iloc[22].Value)
-    mu.osteonlength = eval(df.iloc[23].Value)
-    mu.porosity = eval(df.iloc[24].Value)
-    sigma.SED = eval(df.iloc[25].Value)
-    sigma.Ndiameter = eval(df.iloc[26].Value)
-    sigma.Ncircularity = eval(df.iloc[27].Value)
-    sigma.Hdiameter = eval(df.iloc[28].Value)
-    sigma.Hcircularity = eval(df.iloc[29].Value)
-    sigma.osteonlength = eval(df.iloc[30].Value)
-    sigma.porosity = eval(df.iloc[31].Value)
-    weighting.phi_values = eval(df.iloc[32].Value)
-    weighting.phi_probs = eval(df.iloc[33].Value)
-    weighting.theta_values = eval(df.iloc[34].Value)
-    weighting.theta_probs = eval(df.iloc[35].Value)
-    target_porosity = eval(df.iloc[36].Value)
-    params.pores_before_networking = eval(df.iloc[37].Value)
-    params.top_branches = eval(df.iloc[38].Value)
-    params.bottom_branches = eval(df.iloc[39].Value)
-    params.sealed_osteon_chance = eval(df.iloc[40].Value)
-    params.transverse_flag_onset = eval(df.iloc[41].Value)
-    params.shape_proportions = eval(df.iloc[42].Value)
+    mu.Ndiameter = eval(df.iloc[18].Value)
+    mu.Ncircularity = eval(df.iloc[19].Value)
+    mu.Hdiameter = eval(df.iloc[20].Value)
+    mu.Hcircularity = eval(df.iloc[21].Value)
+    mu.osteonlength = eval(df.iloc[22].Value)
+    mu.porosity = eval(df.iloc[23].Value)
+    sigma.Ndiameter = eval(df.iloc[24].Value)
+    sigma.Ncircularity = eval(df.iloc[25].Value)
+    sigma.Hdiameter = eval(df.iloc[26].Value)
+    sigma.Hcircularity = eval(df.iloc[27].Value)
+    sigma.osteonlength = eval(df.iloc[28].Value)
+    sigma.porosity = eval(df.iloc[29].Value)
+    weighting.phi_values = eval(df.iloc[30].Value)
+    weighting.phi_probs = eval(df.iloc[31].Value)
+    weighting.theta_values = eval(df.iloc[32].Value)
+    weighting.theta_probs = eval(df.iloc[33].Value)
+    target_porosity = eval(df.iloc[34].Value)
+    params.pores_before_networking = eval(df.iloc[35].Value)
+    params.top_branches = eval(df.iloc[36].Value)
+    params.bottom_branches = eval(df.iloc[37].Value)
+    params.sealed_osteon_chance = eval(df.iloc[38].Value)
+    params.transverse_flag_onset = eval(df.iloc[39].Value)
+    params.shape_proportions = eval(df.iloc[40].Value)
     
     return option, mu, sigma, weighting, target_porosity, params
