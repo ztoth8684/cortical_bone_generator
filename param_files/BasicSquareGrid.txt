@@ -16,14 +16,12 @@ option.maxosteonlength is <<inf>>
 option.SED_limit is <<2>>
 option.TP_CORRECTION_FACTOR is <<1>>
 option.experimental_porosity is <<True>>
-mu.SED is <<0>>
 mu.Ndiameter is <<70.0>>
 mu.Ncircularity is <<0.66>>
 mu.Hdiameter is <<180.0>>
 mu.Hcircularity is <<0.42>>
 mu.osteonlength is <<4000.0>>
 mu.porosity is <<0.075046512>>
-sigma.SED is <<1>>
 sigma.Ndiameter is <<4.0>>
 sigma.Ncircularity is <<0.03>>
 sigma.Hdiameter is <<37.5>>

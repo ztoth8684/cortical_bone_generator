@@ -81,6 +81,7 @@ def GetPoreData(file_directory = './pore_files/'):
         for m in range(1,len(counts[n])):
             A = counts[n][m]
             R = np.sqrt(A/np.pi)
+            R *= 10 # convert from pixel size length to µm
             values.append(round(2*R))
                 
     values.sort(reverse=True)
@@ -119,15 +120,16 @@ def ReadPoreData(targetfile):
 # %% Create Histogram
 
 def PoreHist(values, title):
-    '''Creates histogram of pore diameters (0–60 µm, 20 bins)'''
+    '''Creates histogram of pore diameters (0–600 µm, 20 bins)'''
     
-    pd.Series(values).plot.hist(grid=True, bins=20, range=(0,60), rwidth=0.9, density=True, figure=plt.figure())
+    pd.Series(values).plot.hist(grid=True, bins=20, range=(0,600), rwidth=0.9, 
+                                density=False, weights=np.ones(len(values)) / len(values),  figure=plt.figure())
     plt.title(title)
     plt.xlabel('Diameter, µm')
     plt.ylabel('Proportion of Total Pores')
     plt.grid(axis='y', alpha=0.75)
-    plt.xlim([0,60])
-    plt.ylim([0,0.175])
+    plt.xlim([0,600])
+    # plt.ylim([0,0.175])
 
 #%% Plot Diameter Graphs
 
@@ -139,7 +141,7 @@ def PlotDiameterGraphs(targetfiles, titles):
     if len(titles) != len(targetfiles):
         raise Exception('Number of titles and data files to plot do not match')
             
-    for a,b in zip(targetfile, titles):
+    for a,b in zip(targetfiles, titles):
         PoreHist(ReadPoreData(a), b)
 
 #%% Percent Bin Height Change
@@ -171,19 +173,25 @@ def PercentBinHeightChange(values_1, values_2):
 
 if __name__ == "__main__":
     
-    targetfile = ['RealPoreInfo.pkl',
-                  'GenPoreInfo.pkl',
-                  '7-18PoreInfo.pkl',
-                  '7-15.7PoreInfo.pkl',
-                  'MatchingPoreInfo.pkl',
-                  '7-25PoreInfo.pkl']
+    targetfile = [\
+                  'RealValues_um.pkl',
+                  'LitValues_um.pkl',
+                  'OptValues_um.pkl']
+#                  'RealPoreInfo.pkl',
+#                  'GenPoreInfo.pkl',
+#                  '7-18PoreInfo.pkl',
+#                  '7-15.7PoreInfo.pkl',
+#                  'MatchingPoreInfo.pkl',
+#                  '7-25PoreInfo.pkl']
             
-    titles = ['Pore Diameter from CT Scans',
-              'Pore Diameter from Literature Values',
-              'Pore Diameter from Optimized Values',
-              '7-15.7 Pore Diameter',
-              'Matching Pore Diameter',
-              '7-25 Pore Diameter']
+    titles = [\
+              'Pore Diameter from CT Scans'
+              ,'Pore Diameter from Literature Values'
+              ,'Pore Diameter from Optimized Values'
+#              ,'7-15.7 Pore Diameter'
+#              ,'Matching Pore Diameter'
+#              ,'7-25 Pore Diameter'
+              ]
 
     PlotDiameterGraphs(targetfile, titles)
     
