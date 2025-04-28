@@ -10,10 +10,11 @@
             >>> from PoreGenerator import cortical_bone_generator
             >>> exports = ['tiff', 'txt', 'stl', 'xlsx']
             >>> rng_method = 'some seed value'
-			>>> Bone = cortical_bone_generator(None, 'Timestamp', exports, rng_method)
+            >>> filepath = , './pore_files/subfolder/'
+			>>> Bone = cortical_bone_generator(None, 'prefix(ForTesting_)', exports, rng_method, filepath)
 
 		Terminal:
-			$  python PoreGenerator.py Defaults.txt  Timestamp  ['tiff'] 'seed string'
+			$  python PoreGenerator.py Defaults.txt  Timestamp  ['tiff'] 'seed string' './pore_files/subfolder/'
 """
 
 import os.path
@@ -31,7 +32,7 @@ from LoadParameters import LoadParameters
 # %% Initialization
 
 
-def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports = ['tiff'], rng_method = False):
+def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports = ['tiff'], rng_method = False, fpath = './pore_files/'):
 
     '''
     param_file
@@ -65,7 +66,7 @@ def cortical_bone_generator(param_file = None, namestyle = 'Timestamp', exports 
 
     option, mu, sigma = PGf.scaleParameters(option, mu, sigma, 1/10)
     # set file name
-    [fpath, fname] = PGf.nameFig(namestyle)
+    [fpath, fname] = PGf.nameFig(namestyle, fpath)
     
     # sets rng based on rng_method
     RNGkey = PGf.setRNG(rng_method)

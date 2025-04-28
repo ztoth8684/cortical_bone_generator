@@ -106,11 +106,10 @@ def scaleParameters(option, mu, sigma, scale):
 
 #%%
 
-def nameFig(namestyle):
+def nameFig(namestyle, fpath):
     '''sets name for the file generated'''
     
     # File name:
-    fpath = './pore_files/'
     clock_ = datetime.datetime.now()
     if namestyle == 'Timestamp':
         fname = clock_.strftime("%Y_%m_%d_%H_%M_%S") + '.tif'

@@ -11,11 +11,15 @@ The program was written with Python 3.11. The program uses the following modules
 Usage:
 	Python:
         >>> `from PoreGenerator import cortical_bone_generator`
+        >>> `param_file = 'Optimized.txt'`
+        >>> `namestyle = 'Timestamp'`
         >>> `exports = ['tiff', 'txt', 'stl', 'xlsx']`
         >>> `rng_method = 'some seed value'`
-		>>> `Bone = cortical_bone_generator(None, 'Timestamp', exports, rng_method)`
+        >>> `fpath = './pore_files/subfolder/'`
+		>>> `Bone = cortical_bone_generator(param_file, namestyle, exports, rng_method, fpath)`
 	Terminal:
-		$  `python PoreGenerator.py Defaults.txt  Timestamp  ['tiff'] 'seed string'`
+		$  `python PoreGenerator.py Defaults.txt  Timestamp  ['tiff'] 'seed string' './pore_files/subfolder/'`
+
 # Components
 ## PoreGenerator.py
 
