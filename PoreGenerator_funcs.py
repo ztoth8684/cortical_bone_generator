@@ -15,6 +15,7 @@ import scipy.stats as stats
 import random
 import meshlib.mrmeshpy as mr
 import meshlib.mrmeshnumpy as mrn
+import fnmatch
 
 from PoreGenerator_classes import MixtureModel
 class Struct:
@@ -110,13 +111,16 @@ def nameFig(namestyle):
     
     # File name:
     fpath = './pore_files/'
+    clock_ = datetime.datetime.now()
     if namestyle == 'Timestamp':
-        clock_ = datetime.datetime.now()
         fname = clock_.strftime("%Y_%m_%d_%H_%M_%S") + '.tif'
     else:
         banlist = ['<','>',':','\"','/','\\','|','?','*']
         namestyle = namestyle.translate({ord(i): None for i in banlist})
-        if namestyle.endswith('.tif'):
+        # You can prefix the Timestamp name style
+        if len(fnmatch.filter([namestyle],"prefix(*)")) > 0:
+            fname = namestyle.removeprefix("prefix(").removesuffix(")") + clock_.strftime("%Y_%m_%d_%H_%M_%S") + '.tif'
+        if namestyle.endswith('.tif') or namestyle.endswith(".tiff"):
             fname = namestyle
         else:
             fname = namestyle + '.tif'

@@ -123,7 +123,7 @@ def PoreHist(values, title):
     '''Creates histogram of pore diameters (0–600 µm, 20 bins)'''
     
     pd.Series(values).plot.hist(grid=True, bins=20, range=(0,600), rwidth=0.9, 
-                                density=False, weights=np.ones(len(values)) / len(values),  figure=plt.figure())
+                                density=False, weights=np.ones(len(values)) / len(values), figure=plt.figure())
     plt.title(title)
     plt.xlabel('Diameter, µm')
     plt.ylabel('Proportion of Total Pores')
