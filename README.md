@@ -20,6 +20,17 @@ Usage:
 	Terminal:
 		$  `python PoreGenerator.py Defaults.txt  Timestamp  ['tiff'] 'seed string' './pore_files/subfolder/'`
 
+Default values are as follows:
+	`param_file = None`
+		This is the file stating what values of parameters to use. If "None", values from LoadParameters.py are used.
+	`namestyle = 'Timestamp'`
+		Filename for the generated files. If "Timestamp", the file is named based on the time the core started generating. If "prefix(\*)", the timestamp is prefixed with \*.
+	`exports = ['tiff']`
+		A list of filetypes to export as. Options are "xlsx", "txt", "tiff", "stl".
+	`rng_method = False`
+		Sets rng seed value. If "True", re-uses the value from the last time the program was run. If "False", uses a random value. Else, uses the value of "rng_method" as the seed. 
+	`fpath = './pore_files/'`
+		Directory to save files to.
 # Components
 ## PoreGenerator.py
 
