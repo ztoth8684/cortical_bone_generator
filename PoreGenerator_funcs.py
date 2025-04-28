@@ -120,7 +120,7 @@ def nameFig(namestyle):
         # You can prefix the Timestamp name style
         if len(fnmatch.filter([namestyle],"prefix(*)")) > 0:
             fname = namestyle.removeprefix("prefix(").removesuffix(")") + clock_.strftime("%Y_%m_%d_%H_%M_%S") + '.tif'
-        if namestyle.endswith('.tif') or namestyle.endswith(".tiff"):
+        elif namestyle.endswith('.tif') or namestyle.endswith(".tiff"):
             fname = namestyle
         else:
             fname = namestyle + '.tif'
