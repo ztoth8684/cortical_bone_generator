@@ -10,7 +10,7 @@
             >>> from PoreGenerator import cortical_bone_generator
             >>> exports = ['tiff', 'txt', 'stl', 'xlsx']
             >>> rng_method = 'some seed value'
-            >>> filepath = , './pore_files/subfolder/'
+            >>> filepath = './pore_files/subfolder/'
 			>>> Bone = cortical_bone_generator(None, 'prefix(ForTesting_)', exports, rng_method, filepath)
 
 		Terminal:
