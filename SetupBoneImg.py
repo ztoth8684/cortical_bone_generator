@@ -1,6 +1,6 @@
-# exec(open('C:/Users/ztoth/Documents/GitHub/cortical_bone_generator/SetupBoneImg.py').read())
+# exec(open('D:/Documents/GitHub/cortical_bone_generator/SetupBoneImg.py').read())
 import time
-path = 'C:/Users/ztoth/Documents/GitHub/cortical_bone_generator/pore_files/'
+path = 'D:/Documents/GitHub/cortical_bone_generator/pore_files/'
 print("Use showPorosity('<filename.tif>') to display a .tif file")
 print('The path to <filename.tif> is set to '+path)
 print("Use iso() to rotate the current figure to an isometric view")
